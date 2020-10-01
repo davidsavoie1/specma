@@ -2,6 +2,10 @@
   "name": "specma",
   "version": "1.0.0",
   "description": "Simple and composable validation",
+  "homepage": "https://github.com/davidsavoie1/specma.git",
+  "bugs": {
+    "url": "https://github.com/davidsavoie1/specma/issues"
+  },
   "main": "lib/index.js",
   "scripts": {
     "build": "npx babel src --out-dir lib",
