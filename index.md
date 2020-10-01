@@ -1,37 +1,107 @@
-## Welcome to GitHub Pages
+# Specma
 
-You can use the [editor on GitHub](https://github.com/davidsavoie1/specma/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+_Simple and composable validation_
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Specma is a Javascript library that allows validating any value against a defined and composable spec.
 
-### Markdown
+> _Wait... what!? Another validation library? But why?_
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+- Validation based on **predicate functions** that return `true` or a custom reason
+- Collection specs defined with the exact **same shape as the value**
+- **Composable specs** with intuitive `and` and `or` operations
+- **Async validation** with promises out of the box
+- Easy **internationalization** of messages
+- Built-in **spread (...)** validation
+- Very **small footprint**
 
-```markdown
-Syntax highlighted code block
+## Getting started
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```
+npm i specma
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+```js
+import s from "specma";
+import * as s from "specma";
+import { validate } from "specma";
+```
 
-### Jekyll Themes
+### Simple value
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/davidsavoie1/specma/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+Specma can be used to validate any type of value, not just objects. The simplest spec is a predicate function that returns `true`/`false`.
 
-### Support or Contact
+```js
+const spec = (x) => typeof x === "number";
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+s.check(spec, 2); // true
+s.check(spec, "2"); // "failed 'spec'"
+```
+
+Value is valid only if the predicate function returns `true`. Hence, to get a more useful reason for invalid values, simply return a reason instead of `false` with a short-circuit evaluation.
+
+```js
+const spec = (x) => typeof x === "number" || "must be a number";
+
+s.check(spec, "2"); // "must be a number"
+```
+
+Return value can be anything other than `true`: a simple reason string, a key to a lookup table, a number, an object... This allows easy internationalization.
+
+```js
+const spec = (x) =>
+  typeof x === "number" || {
+    en: "must be a number",
+    fr: "doit être un nombre",
+  };
+
+s.check(spec, "2"); // { en: 'must be a number', fr: 'doit être un nombre' }
+```
+
+Async validation just works out of the box.
+
+```js
+async function spec(x) {
+  return (await checkIsUnique(x)) || "must be unique";
+}
+
+s.check(spec, "2").then((res) => console.log(res)); // "must be unique"
+```
+
+A spec can be composed of many predicate functions by using `and` or `or`.
+
+```js
+const number = (x) => typeof x === "number" || "must be a number";
+const isAnswerToTheUniverse = (x) => x === 42 || "is not the answer";
+
+const spec = s.and(number, isAnswerToTheUniverse);
+
+s.check(spec, 2); // "is not the answer"
+```
+
+### Collection
+
+## API - Validation
+
+### `validate`
+
+### `check`
+
+### `isValid`
+
+### `conform`
+
+## API - Specs
+
+### `and`
+
+### `or`
+
+### `spread`
+
+### `pair`
+
+## API - Selection
+
+### `select`
+
+### `opt`
