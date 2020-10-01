@@ -9,6 +9,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "npx babel src --out-dir lib",
+    "lint": "eslint src",
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
