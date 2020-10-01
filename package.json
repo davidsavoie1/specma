@@ -1,6 +1,6 @@
 {
   "name": "specma",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple and composable validation",
   "homepage": "https://github.com/davidsavoie1/specma.git",
   "bugs": {
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npx babel src --out-dir lib",
     "lint": "eslint src",
-    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
