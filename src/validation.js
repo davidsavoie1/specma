@@ -8,6 +8,7 @@ import {
   isSpec,
   isColl,
   isPromise,
+  isObj,
 } from "./util";
 import { getPred, validatePred } from "./pred";
 import { findMissingPath, select } from "./selection";
@@ -50,7 +51,10 @@ function interpretCheck({ valid, promise, reason, path = [] }) {
   if (valid) return true;
 
   const key = path.join(".");
-  const message = `'${key}' ${reason}`;
+  if (!key) return reason;
+
+  const stringified = isObj(reason) ? JSON.stringify(reason) : reason;
+  const message = `'${key}' ${stringified}`;
   return message;
 }
 
