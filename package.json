@@ -1,0 +1,48 @@
+{
+  "name": "specma",
+  "version": "1.0.0",
+  "description": "Simple and composable validation",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "npx babel src --out-dir lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "spec",
+    "schema",
+    "validation",
+    "composition",
+    "ensure",
+    "conform",
+    "validate",
+    "predicates"
+  ],
+  "author": "David Savoie",
+  "license": "ISC",
+  "directories": {
+    "lib": "lib",
+    "src": "src"
+  },
+  "files": [
+    "lib"
+  ],
+  "babel": {
+    "presets": [
+      "@babel/env"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/eslint-parser": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "eslint": "^7.10.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2"
+  },
+  "dependencies": {
+    "ramda": "^0.27.1"
+  }
+}
