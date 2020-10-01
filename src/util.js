@@ -24,7 +24,8 @@ export const typeOf = (obj) =>
 export const isTypeOf = R.curry((type, x) => typeOf(x) === type);
 
 export const isArr = isTypeOf("array");
-export const isFunc = (x) => typeOf(x) === "function";
+export const isFunc = (x) =>
+  isTypeOf("function", x) || isTypeOf("asyncfunction", x);
 export const isObj = (x) => typeOf(x) === "object" && !isArr(x);
 export const isNil = (x) => [undefined, null].includes(x);
 export const isNum = (x) => typeOf(x) === "number";
