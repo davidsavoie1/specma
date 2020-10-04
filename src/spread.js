@@ -1,9 +1,7 @@
 import * as R from "ramda";
 import and from "./and";
+import { KEY_SPEC, SPREAD } from "./constants";
 import { cloneSpec, isArr, getEntries } from "./util";
-
-export const SPREAD = Symbol("SPREAD");
-export const KEY_SPEC = Symbol("KEY_SPEC");
 
 export function spread(spec) {
   const clone = cloneSpec(spec);
