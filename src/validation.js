@@ -10,7 +10,7 @@ import {
   isPromise,
   isObj,
 } from "./util";
-import { getPred, validatePred } from "./pred";
+import { getPred } from "./pred";
 import { findMissingPath, select } from "./selection";
 import { extractSpredSpec, getKeySpec } from "./spread";
 
@@ -228,4 +228,36 @@ function validateEntry([key, spec], value, context) {
     [key, valueRes],
     [key, keyRes],
   ];
+}
+
+function validatePred(pred, value, context) {
+  const result = interpretPredAnswer(
+    failSafeCheck(pred, value, context),
+    value
+  );
+  return result.valid === false ? { ...result, value } : result;
+}
+
+function interpretPredAnswer(ans, value) {
+  if (ans === true) return { valid: true, value };
+  if (isPromise(ans))
+    return {
+      valid: null,
+      promise: ans.then((promisedAns) =>
+        interpretPredAnswer(promisedAns, value)
+      ),
+    };
+  return { valid: false, reason: ans };
+}
+
+/* Check a value against a predicate.
+ * If an error occurs during validation, returns false without throuwing. */
+function failSafeCheck(pred, value, context) {
+  const defaultReason = pred.name ? `failed '${pred.name}'` : "is invalid";
+  try {
+    return pred(value, context) || defaultReason;
+  } catch (err) {
+    // console.warn(`Error caught in '${pred.name}' pred:`, err.message);
+    return defaultReason;
+  }
 }

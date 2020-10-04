@@ -6,13 +6,6 @@
   "bugs": {
     "url": "https://github.com/davidsavoie1/specma/issues"
   },
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "npx babel src --out-dir lib",
-    "lint": "eslint src",
-    "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "spec",
     "schema",
@@ -25,28 +18,27 @@
   ],
   "author": "David Savoie",
   "license": "ISC",
-  "directories": {
-    "lib": "lib",
-    "src": "src"
+  "main": "dist/specma.cjs.js",
+  "module": "dist/specma.esm.js",
+  "browser": "dist/specma.umd.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
-    "lib"
+    "dist"
   ],
-  "babel": {
-    "presets": [
-      "@babel/env"
-    ]
-  },
   "devDependencies": {
-    "@babel/cli": "^7.11.6",
-    "@babel/core": "^7.11.6",
-    "@babel/eslint-parser": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.1.2"
+    "prettier": "^2.1.2",
+    "rollup": "^2.28.2"
   },
   "dependencies": {
     "ramda": "^0.27.1"

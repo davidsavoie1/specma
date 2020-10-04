@@ -1,5 +1,6 @@
 import * as R from "ramda";
 import { extractSpredSpec } from "./spread";
+import { OPTIONAL } from "./constants";
 import {
   fromEntries,
   getEntries,
@@ -9,8 +10,6 @@ import {
   mergePaths,
   typeOf,
 } from "./util";
-
-const OPTIONAL = Symbol("OPTIONAL");
 
 export function opt(selection = {}) {
   selection[OPTIONAL] = true;
