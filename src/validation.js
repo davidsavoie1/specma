@@ -12,7 +12,7 @@ import {
 } from "./util";
 import { getPred } from "./pred";
 import { findMissingPath, select } from "./selection";
-import { extractSpredSpec, getKeySpec } from "./spread";
+import { extractSpreadSpec, getKeySpec } from "./spread";
 
 const hasNot = R.complement(R.has);
 
@@ -145,7 +145,7 @@ function validateEntries(spec, value, context) {
  * Append the spread spec on all value keys not present in the collection spec. */
 function expandEntries(spec, value) {
   const pred = getPred(spec);
-  const [spread, declaredEntries] = extractSpredSpec(spec);
+  const [spread, declaredEntries] = extractSpreadSpec(spec);
 
   let allEntries = declaredEntries;
   if (pred) allEntries.push([undefined, pred]);

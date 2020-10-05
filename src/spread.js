@@ -26,7 +26,7 @@ export function getKeySpec(spec) {
   return spec[KEY_SPEC];
 }
 
-export function extractSpredSpec(spec) {
+export function extractSpreadSpec(spec) {
   const [spreadEntries, declaredEntries] = R.partition(
     isArr(spec) ? ([, sp]) => isSpread(sp) : ([key]) => key === "...",
     getEntries(spec)

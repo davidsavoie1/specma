@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import { extractSpredSpec } from "./spread";
+import { extractSpreadSpec } from "./spread";
 import { OPTIONAL } from "./constants";
 import {
   fromEntries,
@@ -53,7 +53,7 @@ export function findMissingPath(selection, coll, currKey) {
 export function select(selection, value) {
   if (!(isColl(selection) && isColl(value))) return value;
 
-  const [spread, explicit] = extractSpredSpec(selection);
+  const [spread, explicit] = extractSpreadSpec(selection);
   if (!spread && R.isEmpty(explicit)) return value;
 
   const explicitKeys = R.pluck(0, explicit);
