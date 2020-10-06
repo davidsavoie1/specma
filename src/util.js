@@ -54,6 +54,13 @@ export const isPath = (x) => isArr(x) && x.every(isKey);
 export const mergePaths = (...paths) =>
   R.into([], R.compose(R.chain(R.unless(isArr, R.of)), R.filter(isKey)), paths);
 
+export function getSubSpec(pathOrKey, spec) {
+  return R.path(
+    R.unless(isArr, (key) => [key], pathOrKey),
+    spec
+  );
+}
+
 export function getEntries(coll) {
   const func = {
     array: (arr) => arr.map((v, i) => [i, v]),
