@@ -26,10 +26,10 @@ export function getKeySpec(spec) {
   return spec[KEY_SPEC];
 }
 
-export function extractSpreadSpec(spec) {
-  const [spreadEntries, declaredEntries] = R.partition(
+export function getSpreadSpec(spec) {
+  const spreadEntries = R.filter(
     isArr(spec) ? ([, sp]) => isSpread(sp) : ([key]) => key === "...",
-    getEntries(spec)
+    getEntries(spec) || []
   );
 
   const combinedSpread = R.cond([
@@ -44,5 +44,16 @@ export function extractSpreadSpec(spec) {
       ),
     ],
   ])(spreadEntries);
-  return [combinedSpread, declaredEntries];
+  return combinedSpread;
+}
+
+export function getDeclaredEntries(spec) {
+  return R.reject(
+    isArr(spec) ? ([, sp]) => isSpread(sp) : ([key]) => key === "...",
+    getEntries(spec) || []
+  );
+}
+
+export function extractSpreadSpec(spec) {
+  return [getSpreadSpec(spec), getDeclaredEntries(spec)];
 }
