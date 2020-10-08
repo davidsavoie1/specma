@@ -257,7 +257,7 @@ function failSafeCheck(pred, value, context) {
   try {
     return pred(value, context) || defaultReason;
   } catch (err) {
-    // console.warn(`Error caught in '${pred.name}' pred:`, err.message);
+    console.warn(`Error caught in '${pred.name}' pred:`, err.message); // eslint-disable-line no-console
     return defaultReason;
   }
 }
