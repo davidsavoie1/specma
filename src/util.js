@@ -52,7 +52,10 @@ export function getKeys(coll) {
 
 export const isPath = (x) => isArr(x) && x.every(isKey);
 export const mergePaths = (...paths) =>
-  R.into([], R.compose(R.chain(R.unless(isArr, R.of)), R.filter(isKey)), paths);
+  R.pipe(
+    R.into([], R.compose(R.chain(R.unless(isArr, R.of)), R.filter(isKey))),
+    R.when(R.isEmpty, R.always(undefined))
+  )(paths);
 
 export function getSubSpec(pathOrKey, spec) {
   return R.path(
