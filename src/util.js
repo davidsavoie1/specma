@@ -73,10 +73,7 @@ export function getEntries(coll) {
 
 export function fromEntries(type, entries = []) {
   const combiner = {
-    array: R.reduce((acc, [idx, v]) => {
-      acc[idx] = v;
-      return acc;
-    }, []),
+    array: R.map(([, v]) => v),
     object: R.fromPairs,
     map: Map.fromEntries,
   }[type];
