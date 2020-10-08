@@ -8,7 +8,8 @@ import {
   isSpec,
   isColl,
   isPromise,
-  isObj,, getCollItem
+  isObj,
+  getCollItem,
 } from "./util";
 import { getPred } from "./pred";
 import { findMissingPath, select } from "./selection";
