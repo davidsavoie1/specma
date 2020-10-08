@@ -3,6 +3,7 @@ import { extractSpreadSpec } from "./spread";
 import { OPTIONAL } from "./constants";
 import {
   fromEntries,
+  getCollItem,
   getEntries,
   isColl,
   isPath,
@@ -37,7 +38,7 @@ export function findMissingPath(selection, coll, currKey) {
     if (!isTypeOf("object", subReq)) return undefined;
 
     const optional = !!subReq[OPTIONAL];
-    const subValue = coll[k];
+    const subValue = getCollItem(k, coll);
 
     if (!optional && !subValue) return k;
     if (optional && !subValue) return undefined;
@@ -61,7 +62,10 @@ export function select(selection, value) {
   return fromEntries(
     typeOf(value),
     getEntries(value)
-      .filter(([k]) => !!spread || (explicitKeys.includes(k) && selection[k]))
-      .map(([k, v]) => [k, select(selection[k], v)])
+      .filter(
+        ([k]) =>
+          !!spread || (explicitKeys.includes(k) && getCollItem(k, selection))
+      )
+      .map(([k, v]) => [k, select(getCollItem(k, selection), v)])
   );
 }

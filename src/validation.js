@@ -8,7 +8,7 @@ import {
   isSpec,
   isColl,
   isPromise,
-  isObj,
+  isObj,, getCollItem
 } from "./util";
 import { getPred } from "./pred";
 import { findMissingPath, select } from "./selection";
@@ -218,7 +218,9 @@ function validateEntry([key, spec], value, context) {
   if (!R.has(key, value)) return [[key, { valid: true }]];
 
   const subContext = R.prop(key, context);
-  const valueRes = validate(spec, value[key], { context: subContext });
+  const valueRes = validate(spec, getCollItem(key, value), {
+    context: subContext,
+  });
   const keySpec = getKeySpec(spec);
 
   if (!keySpec) return [[key, valueRes]];

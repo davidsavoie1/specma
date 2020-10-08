@@ -85,6 +85,34 @@ export function fromEntries(type, entries = []) {
   return combiner(entries);
 }
 
+export function getCollItem(key, coll) {
+  const getter = {
+    array: (arr) => arr[key],
+    object: (obj) => obj[key],
+    map: (map) => map.get(key),
+  }[typeOf(coll)];
+
+  return getter && getter(coll);
+}
+
+export function setCollItem(key, value, coll) {
+  const setter = {
+    array: (arr) => {
+      const before = arr.slice(0, key);
+      const after = key < arr.length ? arr.slice(key + 1) : [];
+      return [...before, value, ...after];
+    },
+    object: (obj) => ({ ...obj, [key]: value }),
+    map: (map) => {
+      const newMap = new Map(map.entries());
+      newMap.set(key, value);
+      return newMap;
+    },
+  }[typeOf(coll)];
+
+  return setter ? setter(coll) : coll;
+}
+
 export function mergeColls(...specs) {
   return fromEntries(typeOf(specs[0]), R.chain(getEntries, specs));
 }

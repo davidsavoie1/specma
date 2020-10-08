@@ -7,6 +7,7 @@ export {
 } from "./spread";
 export {
   fromEntries,
+  getCollItem,
   getEntries,
   getKeys,
   getSubSpec,
@@ -14,4 +15,5 @@ export {
   isPred,
   isSpec,
   mergePaths,
+  setCollItem,
 } from "./util";
