@@ -1,4 +1,25 @@
-import * as R from "ramda";
+import {
+  all,
+  assoc,
+  chain,
+  complement,
+  difference,
+  dissoc,
+  either,
+  equals,
+  has,
+  hasPath,
+  isEmpty,
+  isNil,
+  mergeDeepRight,
+  path,
+  pathSatisfies,
+  pipe,
+  prop,
+  propEq,
+  propSatisfies,
+  when,
+} from "ramda";
 import {
   isPred,
   typeOf,
@@ -15,7 +36,7 @@ import { getPred } from "./pred";
 import { findMissingPath, select } from "./selection";
 import { extractSpreadSpec, getKeySpec } from "./spread";
 
-const hasNot = R.complement(R.has);
+const hasNot = complement(has);
 
 /* Returns `true`, `false` or a promise that resolves to these values. */
 export function isValid(...args) {
@@ -80,14 +101,11 @@ export function validate(
 
   const result = _validate(spec, prunedValue, { required, context });
 
-  return R.pipe(
+  return pipe(
     /* Associate `value` if it doesn't have ont or if valid result */
-    R.when(
-      R.either(hasNot("value"), R.prop("valid")),
-      R.assoc("value", prunedValue)
-    ),
+    when(either(hasNot("value"), prop("valid")), assoc("value", prunedValue)),
     /* Always return a `promise` key */
-    R.assoc("promise", result.promise || Promise.resolve(result))
+    assoc("promise", result.promise || Promise.resolve(result))
   )(result);
 }
 
@@ -122,12 +140,12 @@ function _validate(spec, value, { required = {}, context } = {}) {
 function createSelection({ selection: sel, spec, required }) {
   if (!sel) return undefined;
   if (isColl(sel)) return sel;
-  return [spec, required].filter(isColl).reduce(R.mergeDeepRight, {});
+  return [spec, required].filter(isColl).reduce(mergeDeepRight, {});
 }
 
 function validateEntries(spec, value, context) {
   const response = interpretEntriesResults(
-    R.chain(
+    chain(
       (entry) => validateEntry(entry, value, context),
       expandEntries(spec, value)
     ),
@@ -135,9 +153,9 @@ function validateEntries(spec, value, context) {
   );
 
   /* Remove empty path and associate global value when valid */
-  return R.pipe(
-    R.when(R.propSatisfies(R.isEmpty, "path"), R.dissoc("path")),
-    R.when(R.prop("valid"), R.assoc("value", value))
+  return pipe(
+    when(propSatisfies(isEmpty, "path"), dissoc("path")),
+    when(prop("valid"), assoc("value", value))
   )(response);
 }
 
@@ -155,7 +173,7 @@ function expandEntries(spec, value) {
 
   const valueKeys = getKeys(value);
   const specKeys = declaredEntries.map(([key]) => key);
-  const undeclaredKeys = R.difference(valueKeys, specKeys);
+  const undeclaredKeys = difference(valueKeys, specKeys);
   const spreadEntries = undeclaredKeys.map((key) => [key, spread]);
 
   allEntries.push(...spreadEntries);
@@ -164,14 +182,11 @@ function expandEntries(spec, value) {
 
 function interpretEntriesResults(results = [], value) {
   /* If all entries are already valid, return valid result. */
-  const allValid = R.all(
-    R.pathSatisfies(R.equals(true), [1, "valid"]),
-    results
-  );
+  const allValid = all(pathSatisfies(equals(true), [1, "valid"]), results);
   if (allValid) return { valid: true, value };
 
   /* If one of the branches is already invalid, return it with its path */
-  const invalidEntry = results.find(([, ans]) => R.propEq("valid", false, ans));
+  const invalidEntry = results.find(([, ans]) => propEq("valid", false, ans));
   if (invalidEntry) {
     const [key, { reason, path, value: entryValue }] = invalidEntry;
     return {
@@ -187,7 +202,7 @@ function interpretEntriesResults(results = [], value) {
   return {
     valid: null,
     promise: new Promise((resolve) => {
-      const promisedEntries = results.filter(R.hasPath([1, "promise"]));
+      const promisedEntries = results.filter(hasPath([1, "promise"]));
 
       /* As soon as a promise resolves to an invalid result,
        * return it with its path. */
@@ -200,7 +215,7 @@ function interpretEntriesResults(results = [], value) {
 
       /* Wait until all promises have resolved, then put these entry results
        * through the interpretation process again. */
-      const promises = promisedEntries.map(R.path([1, "promise"]));
+      const promises = promisedEntries.map(path([1, "promise"]));
       Promise.all(promises).then((resolvedResults) => {
         const resolvedEntries = resolvedResults.map((res, idx) => [
           promisedEntries[idx][0],
@@ -214,11 +229,11 @@ function interpretEntriesResults(results = [], value) {
 
 /* Validate a branch of a value against a spec entry. */
 function validateEntry([key, spec], value, context) {
-  if (R.isNil(key)) return [[key, validate(spec, value, { context })]];
+  if (isNil(key)) return [[key, validate(spec, value, { context })]];
 
-  if (!R.has(key, value)) return [[key, { valid: true }]];
+  if (!has(key, value)) return [[key, { valid: true }]];
 
-  const subContext = R.prop(key, context);
+  const subContext = prop(key, context);
   const valueRes = validate(spec, getCollItem(key, value), {
     context: subContext,
   });

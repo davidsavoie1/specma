@@ -1,4 +1,3 @@
-import * as R from "ramda";
 import { extractSpreadSpec } from "./spread";
 import { OPTIONAL } from "./constants";
 import {
@@ -30,7 +29,7 @@ export function findMissingPath(selection, coll, currKey) {
     return [...acc, k];
   }, []);
 
-  const missingKey = reqKeys.find((k) => !R.has(k, coll));
+  const missingKey = reqKeys.find((k) => getCollItem(k, coll) === undefined);
   if (missingKey) return mergePaths(currKey, missingKey);
 
   /* Drill down recursively into sub paths */
@@ -55,9 +54,9 @@ export function select(selection, value) {
   if (!(isColl(selection) && isColl(value))) return value;
 
   const [spread, explicit] = extractSpreadSpec(selection);
-  if (!spread && R.isEmpty(explicit)) return value;
+  if (!spread && explicit.length <= 0) return value;
 
-  const explicitKeys = R.pluck(0, explicit);
+  const explicitKeys = explicit.map(([key]) => key);
 
   return fromEntries(
     typeOf(value),
