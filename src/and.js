@@ -1,22 +1,53 @@
-import * as R from "ramda";
-import { isColl, isPred, isPromise, mergeColls } from "./util";
+import { union } from "ramda";
+import {
+  fromEntries,
+  getCollItem,
+  getKeys,
+  isColl,
+  isPred,
+  isPromise,
+  typeOf,
+} from "./util";
 import { assocPred, getPred } from "./pred";
 
 export default function and(...specs) {
-  /* Merge collection specs into a single collection */
-  const collSpec = mergeColls(...R.filter(isColl, specs));
-
   /* Create a merged predicate function that combines all the predicates
-   * (attached to collections or not) */
+   * (predicate function or attached to collections) */
   const preds = specs.map(getPred).filter(isPred);
-  function mergedPred(x, context) {
-    const answers = preds.map((pred) => pred(x, context));
-    return interpretAnswers(answers);
-  }
+  const mergedPred = combinePreds(...preds);
 
-  /* If there's a collection spec, attach the merged pred to it.
-   * Otherwise, return it as a simple standalone function predicate. */
-  return collSpec ? assocPred(mergedPred, collSpec) : mergedPred;
+  const collSpecs = specs.filter(isColl, specs);
+  if (collSpecs.length <= 0) return mergedPred;
+
+  /* Merge collection specs into a single collection. */
+  const collSpec = combineCollSpecs(...collSpecs);
+
+  /* If there's a collection spec, attach the merged pred to it. */
+  return assocPred(mergedPred, collSpec);
+}
+
+function combinePreds(...preds) {
+  return function mergedPred(x, context) {
+    return interpretAnswers(preds.map((pred) => pred(x, context)));
+  };
+}
+
+function combineCollSpecs(...specs) {
+  /* If each spec has a different collection type (ie array and object),
+   * use a Map to ensure proper key integrity. */
+  const combinedType = specs
+    .map(typeOf)
+    .reduce((t1, t2) => (t1 === t2 ? t1 : "map"));
+
+  const allKeys = specs.map(getKeys).reduce(union);
+
+  return fromEntries(
+    combinedType,
+    allKeys.map((key) => [
+      key,
+      and(...specs.map((spec) => getCollItem(key, spec))),
+    ])
+  );
 }
 
 function interpretAnswers(answers = []) {
