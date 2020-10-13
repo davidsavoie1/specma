@@ -2,13 +2,18 @@ import { union } from "ramda";
 import {
   fromEntries,
   getCollItem,
+  getEntries,
   getKeys,
+  isArr,
   isColl,
   isPred,
   isPromise,
+  isSpec,
+  setCollItem,
   typeOf,
 } from "./util";
 import { assocPred, getPred } from "./pred";
+import { isSpread, spread } from "./spread";
 
 export default function and(...specs) {
   /* Create a merged predicate function that combines all the predicates
@@ -41,13 +46,49 @@ function combineCollSpecs(...specs) {
 
   const allKeys = specs.map(getKeys).reduce(union);
 
-  return fromEntries(
-    combinedType,
-    allKeys.map((key) => [
-      key,
-      and(...specs.map((spec) => getCollItem(key, spec))),
-    ])
+  /* Extract spread specs, merge collection specs then reassign spread */
+  const spreads = specs
+    .map((sp) => {
+      if (isArr(sp)) return sp.filter(isSpread);
+      return getCollItem("...", sp) || [];
+    })
+    .flat(1);
+
+  const specsWithoutSpread = specs.map((sp) =>
+    fromEntries(
+      typeOf(sp),
+      getEntries(sp).filter(([k, s]) => k !== "..." && !isSpread(s))
+    )
   );
+
+  const combinedCollSpec = fromEntries(
+    combinedType,
+    allKeys.reduce((acc, key) => {
+      const specsForThisKey = specsWithoutSpread.reduce((acc, spec) => {
+        const subSpec = getCollItem(key, spec);
+        return isSpec(subSpec) ? [...acc, subSpec] : acc;
+      }, []);
+      if (specsForThisKey.length <= 0) return acc;
+      return [
+        ...acc,
+        [
+          key,
+          specsForThisKey.length > 1
+            ? and(...specsForThisKey)
+            : specsForThisKey[0],
+        ],
+      ];
+    }, [])
+  );
+
+  if (spreads.length <= 0) return combinedCollSpec;
+
+  const combinedSpread = and(...spreads);
+
+  if (isArr(combinedCollSpec))
+    return [...combinedCollSpec, spread(combinedSpread)];
+
+  return setCollItem("...", combinedSpread, combinedCollSpec);
 }
 
 function interpretAnswers(answers = []) {
