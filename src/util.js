@@ -86,7 +86,8 @@ export function getEntries(coll) {
     map: (map) => Array.from(map.entries()),
   }[typeOf(coll)];
 
-  return func && func(coll);
+  if (!func) return [];
+  return func(coll);
 }
 
 export function fromEntries(type, entries = []) {
@@ -96,7 +97,7 @@ export function fromEntries(type, entries = []) {
     map: Map.fromEntries,
   }[type];
 
-  if (!combiner) return entries[0];
+  if (!combiner) return undefined;
   return combiner(entries);
 }
 
