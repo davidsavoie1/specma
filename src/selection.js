@@ -1,4 +1,4 @@
-import { extractSpreadSpec } from "./spread";
+import { extractSpreadSpec } from "./spreadHelpers";
 import { OPTIONAL } from "./constants";
 import {
   fromEntries,
@@ -16,8 +16,8 @@ export function opt(selection = {}) {
   return selection;
 }
 
-function isOpt(selection) {
-  return !!selection[OPTIONAL];
+export function isOpt(selection) {
+  return !selection || !!selection[OPTIONAL];
 }
 
 export function findMissingPath(selection, coll, currKey) {
