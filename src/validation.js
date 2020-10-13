@@ -32,9 +32,10 @@ import {
   isObj,
   getCollItem,
 } from "./util";
+import { getKeySpec } from "./pair";
 import { getPred } from "./pred";
 import { findMissingPath, select } from "./selection";
-import { extractSpreadSpec, getKeySpec } from "./spread";
+import { extractSpreadSpec } from "./spreadHelpers";
 
 const hasNot = complement(has);
 

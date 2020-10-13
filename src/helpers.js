@@ -1,10 +1,8 @@
+export { getKeySpec } from "./pair";
 export { getPred } from "./pred";
-export {
-  getDeclaredEntries,
-  getKeySpec,
-  getSpreadSpec,
-  isSpread,
-} from "./spread";
+export { isOpt } from "./selection";
+export { isSpread } from "./spread";
+export { getDeclaredEntries, getSpread } from "./spreadHelpers";
 export {
   fromEntries,
   getCollItem,
