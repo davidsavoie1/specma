@@ -1,4 +1,19 @@
-import * as R from "ramda";
+import {
+  always,
+  chain,
+  compose,
+  curry,
+  filter,
+  fromPairs,
+  into,
+  isEmpty,
+  map,
+  of,
+  path,
+  pipe,
+  unless,
+  when,
+} from "ramda";
 
 /* Return a string describing the type of the argument.
  * More precise than the native typeof operator.
@@ -21,7 +36,7 @@ import * as R from "ramda";
 export const typeOf = (obj) =>
   ({}.toString.call(obj).split(" ")[1].slice(0, -1).toLowerCase());
 
-export const isTypeOf = R.curry((type, x) => typeOf(x) === type);
+export const isTypeOf = curry((type, x) => typeOf(x) === type);
 
 export const isArr = isTypeOf("array");
 export const isFunc = (x) =>
@@ -52,7 +67,17 @@ export function getKeys(coll) {
 
 export const isPath = (x) => isArr(x) && x.every(isKey);
 export const mergePaths = (...paths) =>
-  R.into([], R.compose(R.chain(R.unless(isArr, R.of)), R.filter(isKey)), paths);
+  pipe(
+    into([], compose(chain(unless(isArr, of)), filter(isKey))),
+    when(isEmpty, always(undefined))
+  )(paths);
+
+export function getSubSpec(pathOrKey, spec) {
+  return path(
+    unless(isArr, (key) => [key], pathOrKey),
+    spec
+  );
+}
 
 export function getEntries(coll) {
   const func = {
@@ -61,25 +86,51 @@ export function getEntries(coll) {
     map: (map) => Array.from(map.entries()),
   }[typeOf(coll)];
 
-  return func && func(coll);
+  if (!func) return [];
+  return func(coll);
 }
 
 export function fromEntries(type, entries = []) {
   const combiner = {
-    array: R.reduce((acc, [idx, v]) => {
-      acc[idx] = v;
-      return acc;
-    }, []),
-    object: R.fromPairs,
+    array: map(([, v]) => v),
+    object: fromPairs,
     map: Map.fromEntries,
   }[type];
 
-  if (!combiner) return entries[0];
+  if (!combiner) return undefined;
   return combiner(entries);
 }
 
+export function getCollItem(key, coll) {
+  const getter = {
+    array: (arr) => arr[key],
+    object: (obj) => obj[key],
+    map: (map) => map.get(key),
+  }[typeOf(coll)];
+
+  return getter && getter(coll);
+}
+
+export function setCollItem(key, value, coll) {
+  const setter = {
+    array: (arr) => {
+      const before = arr.slice(0, key);
+      const after = key < arr.length ? arr.slice(key + 1) : [];
+      return [...before, value, ...after];
+    },
+    object: (obj) => ({ ...obj, [key]: value }),
+    map: (map) => {
+      const newMap = new Map(map.entries());
+      newMap.set(key, value);
+      return newMap;
+    },
+  }[typeOf(coll)];
+
+  return setter ? setter(coll) : coll;
+}
+
 export function mergeColls(...specs) {
-  return fromEntries(typeOf(specs[0]), R.chain(getEntries, specs));
+  return fromEntries(typeOf(specs[0]), chain(getEntries, specs));
 }
 
 function anyPass(preds, x) {
@@ -105,9 +156,9 @@ export function cloneSpec(spec) {
 }
 
 export function pickColl(keys, coll) {
-  return R.pipe(
+  return pipe(
     getEntries,
-    R.filter(([k]) => keys.includes(k)),
+    filter(([k]) => keys.includes(k)),
     (entries) => fromEntries(typeOf(coll), entries)
   )(coll);
 }

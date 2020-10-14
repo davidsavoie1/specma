@@ -1,8 +1,8 @@
-import * as R from "ramda";
-import { extractSpredSpec } from "./spread";
+import { extractSpreadSpec } from "./spreadHelpers";
 import { OPTIONAL } from "./constants";
 import {
   fromEntries,
+  getCollItem,
   getEntries,
   isColl,
   isPath,
@@ -16,8 +16,8 @@ export function opt(selection = {}) {
   return selection;
 }
 
-function isOpt(selection) {
-  return !!selection[OPTIONAL];
+export function isOpt(selection) {
+  return !selection || !!selection[OPTIONAL];
 }
 
 export function findMissingPath(selection, coll, currKey) {
@@ -29,7 +29,7 @@ export function findMissingPath(selection, coll, currKey) {
     return [...acc, k];
   }, []);
 
-  const missingKey = reqKeys.find((k) => !R.has(k, coll));
+  const missingKey = reqKeys.find((k) => getCollItem(k, coll) === undefined);
   if (missingKey) return mergePaths(currKey, missingKey);
 
   /* Drill down recursively into sub paths */
@@ -37,7 +37,7 @@ export function findMissingPath(selection, coll, currKey) {
     if (!isTypeOf("object", subReq)) return undefined;
 
     const optional = !!subReq[OPTIONAL];
-    const subValue = coll[k];
+    const subValue = getCollItem(k, coll);
 
     if (!optional && !subValue) return k;
     if (optional && !subValue) return undefined;
@@ -53,15 +53,18 @@ export function findMissingPath(selection, coll, currKey) {
 export function select(selection, value) {
   if (!(isColl(selection) && isColl(value))) return value;
 
-  const [spread, explicit] = extractSpredSpec(selection);
-  if (!spread && R.isEmpty(explicit)) return value;
+  const [spread, explicit] = extractSpreadSpec(selection);
+  if (!spread && explicit.length <= 0) return value;
 
-  const explicitKeys = R.pluck(0, explicit);
+  const explicitKeys = explicit.map(([key]) => key);
 
   return fromEntries(
     typeOf(value),
     getEntries(value)
-      .filter(([k]) => !!spread || (explicitKeys.includes(k) && selection[k]))
-      .map(([k, v]) => [k, select(selection[k], v)])
+      .filter(
+        ([k]) =>
+          !!spread || (explicitKeys.includes(k) && getCollItem(k, selection))
+      )
+      .map(([k, v]) => [k, select(getCollItem(k, selection), v)])
   );
 }

@@ -1,27 +1,36 @@
-import * as R from "ramda";
+import {
+  compose,
+  into,
+  isEmpty,
+  isNil,
+  map,
+  prop,
+  propEq,
+  reject,
+} from "ramda";
 import { validate } from "./validation";
 
 export default function or(...specs) {
   return function _or(value, context) {
-    const responses = specs.map((spec) => validate(spec, value, context));
+    const responses = specs.map((spec) => validate(spec, value, { context }));
     return interpretResponses(responses);
   };
 }
 
 function interpretResponses(responses = []) {
   /* If any response is already valid, `or` is valid. */
-  if (responses.some(R.prop("valid"))) return true;
+  if (responses.some(prop("valid"))) return true;
 
-  const promises = R.into(
+  const promises = into(
     [],
-    R.compose(R.map(R.prop("promise")), R.reject(R.isNil)),
+    compose(map(prop("promise")), reject(isNil)),
     responses
   );
 
   /* If no promises, return the reason of the first invalid reason.
    * If no invalid response is found, `or` is valid. */
-  if (R.isEmpty(promises)) {
-    const invalidResponse = responses.find(R.propEq("valid", false));
+  if (isEmpty(promises)) {
+    const invalidResponse = responses.find(propEq("valid", false));
     if (invalidResponse) return invalidResponse.reason;
 
     return true;
@@ -33,7 +42,7 @@ function interpretResponses(responses = []) {
   return new Promise((resolve) => {
     promises.forEach((promise) =>
       promise.then((resp) => {
-        if (R.prop("valid", resp)) resolve(true);
+        if (prop("valid", resp)) resolve(true);
       })
     );
 
