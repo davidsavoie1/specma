@@ -26,6 +26,22 @@ export const entries = polymorph({
   _: () => [],
 });
 
+export const fromMap = polymorph(
+  {
+    array: (map) => {
+      const indices = [...map.keys()].filter(isNum);
+      const maxIndex = Math.max(...indices);
+      return Array.from({ length: maxIndex + 1 }, (_, i) => map.get(i));
+    },
+    map: (map) => new Map(...map.entries()),
+    object: (map) =>
+      Object.fromEntries(
+        [...map.entries()].filter(([key]) => key !== undefined)
+      ),
+  },
+  2
+);
+
 export const get = polymorph(
   {
     array: (index, arr) => arr[index],
