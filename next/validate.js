@@ -4,7 +4,11 @@ import { resultsRace } from "./results.js";
 import { typeOf } from "./typeOf.js";
 import { entries, getPath, isFunc, isSpec, mergePaths } from "./util.js";
 
-export function validate(specable, value, context, globalKey) {
+export function validate(
+  specable,
+  value,
+  { required = {}, context, select: sel = false, key: globalKey } = {}
+) {
   function enhanceResult(result) {
     if ([true, null].includes(result.valid)) return result;
 
@@ -27,16 +31,20 @@ export function validate(specable, value, context, globalKey) {
   const spec = toSpec(specable);
   const contextMap = new Map(entries(context));
 
-  const globalResult = validate(spec.get(undefined), value, context, globalKey);
+  const globalResult = validate(spec.get(undefined), value, {
+    context,
+    key: globalKey,
+  });
 
   const results = entries(value).reduce(
     (acc, [key, val]) => {
-      if (!spec.has(key)) return acc;
-
-      const subSpec = spec.get(key);
+      const subSpec = spec.get(key) || spec.get("...");
       if (!isSpec(subSpec)) return acc;
 
-      const result = validate(subSpec, val, contextMap.get(key), key);
+      const result = validate(subSpec, val, {
+        context: contextMap.get(key),
+        key,
+      });
       return [...acc, result];
     },
     [globalResult]
