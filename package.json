@@ -1,6 +1,6 @@
 {
   "name": "specma",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Simple and composable validation",
   "homepage": "https://github.com/davidsavoie1/specma.git",
   "bugs": {
