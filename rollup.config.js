@@ -11,8 +11,10 @@ const umd = {
     name: "specma",
     file: pkg.browser,
     format: "umd",
+    globals: { ramda: "ramda" },
   },
   plugins: [resolve(), commonjs()],
+  external: ["ramda"],
 };
 
 /* CommonJS (for Node) and ES module (for bundlers) build.
