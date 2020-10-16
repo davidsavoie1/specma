@@ -40,6 +40,8 @@ export function getPath(path = [], value) {
   return path.reduce((parent, key) => get(key, parent), value);
 }
 
+export const identity = (x) => x;
+
 export function mergePaths(...paths) {
   const path = paths
     .reduce((acc, path) => {

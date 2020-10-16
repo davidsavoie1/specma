@@ -1,7 +1,7 @@
 import { fromSpec, toSpec } from "./collSpec.js";
 import { PRED } from "./constants.js";
 import { resultsRace } from "./results.js";
-import { isColl, isFunc, isPromise } from "./util.js";
+import { identity, isColl, isFunc, isPromise } from "./util.js";
 
 const DEFAULT_INVALID_MSG = "is invalid";
 
@@ -49,7 +49,7 @@ export function validatePred(pred, value, context, enhanceResult) {
   return interpretAnswer(failSafeCheck(pred, value, context), enhanceResult);
 }
 
-function interpretAnswer(ans, enhanceResult) {
+function interpretAnswer(ans, enhanceResult = identity) {
   if (isPromise(ans))
     return {
       valid: null,
