@@ -20,7 +20,6 @@
   "license": "ISC",
   "main": "dist/specma.cjs.js",
   "module": "dist/specma.esm.js",
-  "browser": "dist/specma.umd.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
