@@ -18,7 +18,8 @@ export function validate(
   const prunedValue = selection ? select(selection, value) : value;
 
   function enhanceResult(result) {
-    if ([true, null].includes(result.valid)) return result;
+    if (result.valid === null) return result;
+    if (result.valid === true) return { ...result, value: prunedValue };
 
     const path = mergePaths(globalKey, result.path);
     return {
@@ -29,7 +30,7 @@ export function validate(
     };
   }
 
-  if (!specable) return { valid: true };
+  if (!specable) return enhanceResult({ valid: true });
 
   if (isFunc(specable))
     return validatePred(specable, prunedValue, context, enhanceResult);
@@ -84,7 +85,8 @@ function interpretResults(results = [], enhanceResult) {
   if (firstInvalid) return enhanceResult(firstInvalid);
 
   /* All valid synchronously */
-  if (results.every(({ valid }) => valid === true)) return { valid: true };
+  if (results.every(({ valid }) => valid === true))
+    return enhanceResult({ valid: true });
 
   /* Some promises */
   const unresolvedResults = results.filter(({ valid }) => valid === null);

@@ -61,8 +61,8 @@ function interpretAnswer(ans, enhanceResult = identity) {
   const res =
     ans === true
       ? { valid: true }
-      : enhanceResult({ valid: false, reason: ans || DEFAULT_INVALID_MSG });
-  return { ...res, promise: Promise.resolve(res) };
+      : { valid: false, reason: ans || DEFAULT_INVALID_MSG };
+  return enhanceResult({ ...res, promise: Promise.resolve(res) });
 }
 
 /* Check a value against a predicate.
