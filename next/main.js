@@ -1,7 +1,12 @@
 import { and } from "./and.js";
+import { check } from "./check.js";
+import { opt, select } from "./selection.js";
+import { spread } from "./spread.js";
+import { isPromise } from "./util.js";
 import { validate } from "./validate.js";
 
 const log = console.log.bind(console); // eslint-disable-line no-console
+const stringify = (x) => JSON.stringify(x, null, 2);
 
 const minLength = (min) => (x) =>
   x.length >= min || `must have a length of at least ${min}`;
@@ -16,8 +21,8 @@ const not = (what) => (x) =>
 // const value = 42;
 
 /* Array */
-// const spec = and([and(number, not(42)), [not("foo")]], minLength(3));
-// const value = [41, ["foo"], 100];
+// const spec = spread(and(number, not(42)), []);
+// const value = [42, 32, 100];
 
 /* Object */
 const spec = and(
@@ -26,19 +31,43 @@ const spec = and(
   { obj: { foo: minLength(2) } },
   ({ a, c }) => c > a || "'c' must be higher than 'a'"
 );
-const value = { a: 4, b: "foo2", c: 300, obj: { foo: "1" } };
+const value = {
+  a: 4,
+  b: "foo",
+  c: 300,
+  obj: { foo: "12", bar: "2" },
+  d: "oups",
+};
 
-logAnswers(spec, value);
+// log("spec", spec);
+// logValidate(spec, value, { required: { b: 1, c: 1, obj: opt({ bar: 1 }) } });
+logCheck(spec, value, { required: { b: 1, c: 1, obj: opt({ bar: 1 }) } });
 
-function logAnswers(spec, value, context) {
+function logValidate(spec, value, options) {
   const ping = Date.now();
-  const res = validate(spec, value, context);
-  log(res);
+  const res = validate(spec, value, options);
+  log(stringify(res));
   if (res.valid === null) {
     log("...");
     res.promise.then((res) => {
       const elapsed = Date.now() - ping;
-      log(`${elapsed} ms ::`, res);
+      log(`${elapsed} ms :: \n`, stringify(res));
     });
   }
 }
+
+function logCheck(spec, value, options) {
+  const ping = Date.now();
+  const res = check(spec, value, options);
+  log(res);
+  if (isPromise(res)) {
+    log("...");
+    res.then((res) => {
+      const elapsed = Date.now() - ping;
+      log(`${elapsed} ms :: \n`, res);
+    });
+  }
+}
+
+// const obj = { a: "a", b: "b", c: { foo: 1, bar: 2, baz: 3 } };
+// log(stringify(select({ a: 1, c: { foo: 0, baz: true, "...": true } }, obj)));
