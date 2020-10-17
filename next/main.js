@@ -1,11 +1,5 @@
-import { isValid } from "./isValid.js";
-import { and } from "./and.js";
-import { check } from "./check.js";
-import { conform } from "./conform.js";
-import { opt, select } from "./selection.js";
-import { spread } from "./spread.js";
+import * as s from "./index.js";
 import { isPromise } from "./util.js";
-import { validate } from "./validate.js";
 
 const log = console.log.bind(console); // eslint-disable-line no-console
 const stringify = (x) => JSON.stringify(x, null, 2);
@@ -19,16 +13,16 @@ const not = (what) => (x) =>
   );
 
 /* Function */
-// const spec = and(number, not(42));
+// const spec = s.and(number, not(42));
 // const value = 42;
 
 /* Array */
-// const spec = spread(and(number, not(42)), []);
+// const spec = spread(s.and(number, not(42)), []);
 // const value = [42, 32, 100];
 
 /* Object */
-const spec = and(
-  { a: number },
+const spec = s.and(
+  { a: number, "...": number },
   { a: not(42), b: not("foo") },
   { obj: { foo: minLength(2) } },
   ({ a, c }) => c > a || "'c' must be higher than 'a'"
@@ -41,17 +35,17 @@ const value = {
   d: "oups",
 };
 const options = {
-  required: { c: 1, obj: opt({ bar: 1 }) },
-  select: { a: 1, c: 1 },
+  required: { c: 1, obj: s.opt({ bar: 1 }) },
+  select: { a: 1, c: 1, d: 1 },
 };
 
-// log("spec", spec);
-// logValidate(spec, value, options);
-logOthers(spec, value, options, conform);
+log("spec", spec);
+logValidate(spec, value, options);
+// logOthers(spec, value, options, s.conform);
 
 function logValidate(spec, value, options) {
   const ping = Date.now();
-  const res = validate(spec, value, options);
+  const res = s.validate(spec, value, options);
   log(stringify(res));
   if (res.valid === null) {
     log("...");
@@ -62,7 +56,7 @@ function logValidate(spec, value, options) {
   }
 }
 
-function logOthers(spec, value, options, method = check) {
+function logOthers(spec, value, options, method = s.check) {
   const ping = Date.now();
   const res = method(spec, value, options);
   log(res);
