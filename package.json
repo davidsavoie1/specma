@@ -3,6 +3,10 @@
   "version": "1.0.4",
   "description": "Simple and composable validation",
   "homepage": "https://github.com/davidsavoie1/specma.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidsavoie1/specma.git"
+  },
   "bugs": {
     "url": "https://github.com/davidsavoie1/specma/issues"
   },
