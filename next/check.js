@@ -7,10 +7,14 @@ export function check(...args) {
   return interpretCheck(validate(...args));
 }
 
-function interpretCheck({ valid, promise, reason, path = [] }) {
-  if (valid === null) return promise.then(interpretCheck);
-  if (valid) return true;
+function interpretCheck(result) {
+  if (result.valid === null) return result.promise.then(interpretCheck);
+  if (result.valid === true) return true;
 
+  return enhanceReason(result);
+}
+
+export function enhanceReason({ reason, path = [] }) {
   const key = path.join(".");
   if (!key) return reason;
 

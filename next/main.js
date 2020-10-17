@@ -1,5 +1,7 @@
+import { isValid } from "./isValid.js";
 import { and } from "./and.js";
 import { check } from "./check.js";
+import { conform } from "./conform.js";
 import { opt, select } from "./selection.js";
 import { spread } from "./spread.js";
 import { isPromise } from "./util.js";
@@ -38,10 +40,14 @@ const value = {
   obj: { foo: "12", bar: "2" },
   d: "oups",
 };
+const options = {
+  required: { c: 1, obj: opt({ bar: 1 }) },
+  select: { a: 1, c: 1 },
+};
 
 // log("spec", spec);
-// logValidate(spec, value, { required: { b: 1, c: 1, obj: opt({ bar: 1 }) } });
-logCheck(spec, value, { required: { b: 1, c: 1, obj: opt({ bar: 1 }) } });
+// logValidate(spec, value, options);
+logOthers(spec, value, options, conform);
 
 function logValidate(spec, value, options) {
   const ping = Date.now();
@@ -49,16 +55,16 @@ function logValidate(spec, value, options) {
   log(stringify(res));
   if (res.valid === null) {
     log("...");
-    res.promise.then((res) => {
+    res.promise.then((promised) => {
       const elapsed = Date.now() - ping;
-      log(`${elapsed} ms :: \n`, stringify(res));
+      log(`${elapsed} ms :: \n`, stringify(promised));
     });
   }
 }
 
-function logCheck(spec, value, options) {
+function logOthers(spec, value, options, method = check) {
   const ping = Date.now();
-  const res = check(spec, value, options);
+  const res = method(spec, value, options);
   log(res);
   if (isPromise(res)) {
     log("...");
