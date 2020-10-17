@@ -1,4 +1,3 @@
-// import * as R from "/node_modules/ramda/es/index.js";
 import { typeOf } from "./typeOf.js";
 
 export { typeOf } from "./typeOf.js";

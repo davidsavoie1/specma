@@ -1,3 +1,4 @@
+import mergeDeepRight from "../node_modules/ramda/es/mergeDeepRight.js";
 import { OPTIONAL } from "./constants.js";
 import { getSpread } from "./spread.js";
 import { entries, fromMap, get, isColl, mergePaths } from "./util.js";
@@ -61,4 +62,10 @@ export function select(selection, value) {
     ),
     value
   );
+}
+
+export function createSelection({ selection, spec, required }) {
+  if (!selection) return undefined;
+  if (isColl(selection)) return selection;
+  return [spec, required].filter(isColl).reduce(mergeDeepRight, {});
 }
