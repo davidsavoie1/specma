@@ -23,10 +23,10 @@ export function setPred(pred, coll) {
 export function combinePreds(...preds) {
   if (preds.length <= 1) return preds[0];
 
-  return function combinedPred(value) {
+  return function combinedPred(value, context) {
     const results = preds
       .filter(isFunc)
-      .map((pred) => validatePred(pred, value));
+      .map((pred) => validatePred(pred, value, context));
 
     /* Any is invalid */
     const firstInvalid = results.find(
