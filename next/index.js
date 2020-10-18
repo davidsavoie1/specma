@@ -1,7 +1,8 @@
-export { and } from "./and.js";
-export { check } from "./check.js";
-export { conform } from "./conform.js";
-export { isValid } from "./isValid.js";
-export { opt, select } from "./selection.js";
-export { spread } from "./spread.js";
-export { validate } from "./validate.js";
+export { and } from "./and";
+export { check } from "./check";
+export { conform } from "./conform";
+export { isValid } from "./isValid";
+export { or } from "./or";
+export { opt, select } from "./selection";
+export { spread } from "./spread";
+export { validate } from "./validate";
