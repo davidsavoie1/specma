@@ -3,8 +3,10 @@ import { validate } from "./validate.js";
 
 /* Return `true` if valid, error reason if invalid
  * or a promise that will return those. */
-export function check(...args) {
-  return interpretCheck(validate(...args));
+export function check(spec, value, options, cb) {
+  return interpretCheck(
+    validate(spec, value, options, (result) => cb(interpretCheck(result)))
+  );
 }
 
 function interpretCheck(result) {

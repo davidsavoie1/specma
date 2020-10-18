@@ -3,8 +3,10 @@ import { validate } from "./validate.js";
 
 /* Return value if valid, throw error if invalid
  * or a promise that will do so. */
-export function conform(spec, value, options) {
-  return interpretConform(validate(spec, value, options));
+export function conform(spec, value, options, cb) {
+  return interpretConform(
+    validate(spec, value, options, (response) => cb(interpretConform(response)))
+  );
 }
 
 function interpretConform(result) {

@@ -8,7 +8,8 @@ import { entries, getPath, isFunc, isSpec, mergePaths } from "./util.js";
 export function validate(
   specable,
   value,
-  { required, context, select: sel = false, key: globalKey } = {}
+  { context, required, selection: sel = false, key: globalKey } = {},
+  cb = () => {}
 ) {
   const selection = createSelection({
     selection: sel,
@@ -30,14 +31,20 @@ export function validate(
     };
   }
 
-  if (!specable) return enhanceResult({ valid: true });
+  function respond(result) {
+    const response = enhanceResult(result);
+    cb(response);
+    return response;
+  }
+
+  if (!specable) return respond({ valid: true });
 
   if (isFunc(specable))
-    return validatePred(specable, prunedValue, context, enhanceResult);
+    return validatePred(specable, prunedValue, context, respond);
 
   const specType = typeOf(specable);
   if (typeOf(prunedValue) !== specType)
-    return enhanceResult({
+    return respond({
       valid: false,
       reason: `must be of type ${specType}`,
     });
@@ -45,7 +52,7 @@ export function validate(
   /* If there are keys requirements, check them on the prunedValue. */
   const missingPath = required && findMissingPath(required, prunedValue);
   if (missingPath !== undefined) {
-    return enhanceResult({
+    return respond({
       valid: false,
       reason: "is required",
       path: missingPath,
@@ -74,26 +81,26 @@ export function validate(
     [globalResult]
   );
 
-  return interpretResults(results, enhanceResult);
+  return interpretResults(results, respond);
 }
 
-function interpretResults(results = [], enhanceResult) {
+function interpretResults(results = [], respond) {
   /* Any is invalid */
   const firstInvalid = results.find(
     ({ valid }) => ![null, true].includes(valid)
   );
-  if (firstInvalid) return enhanceResult(firstInvalid);
+  if (firstInvalid) return respond(firstInvalid);
 
   /* All valid synchronously */
   if (results.every(({ valid }) => valid === true))
-    return enhanceResult({ valid: true });
+    return respond({ valid: true });
 
   /* Some promises */
   const unresolvedResults = results.filter(({ valid }) => valid === null);
   return {
     valid: null,
     promise: resultsRace(unresolvedResults).then((promisedResult) => {
-      return interpretResults([promisedResult], enhanceResult);
+      return interpretResults([promisedResult], respond);
     }),
   };
 }
