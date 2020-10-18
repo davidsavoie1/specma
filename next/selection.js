@@ -22,7 +22,7 @@ export function findMissingPath(selection, coll, currKey) {
   }, []);
 
   const missingKey = reqKeys.find((k) => get(k, coll) === undefined);
-  if (missingKey) return mergePaths(currKey, missingKey);
+  if (missingKey !== undefined) return mergePaths(currKey, missingKey);
 
   /* Drill down recursively into sub paths */
   const missingSubKey = reqEntries.reduce((acc, [k, subReq]) => {
