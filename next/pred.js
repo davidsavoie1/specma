@@ -1,5 +1,5 @@
 import { fromSpec, toSpec } from "./collSpec.js";
-import { PRED } from "./constants.js";
+import { PRED, RESULT } from "./constants.js";
 import { resultsRace } from "./results.js";
 import { identity, isColl, isFunc, isPromise } from "./util.js";
 
@@ -50,6 +50,9 @@ export function validatePred(pred, value, context, enhanceResult) {
 }
 
 function interpretAnswer(ans, enhanceResult = identity) {
+  /* If answer is itself already a result (tagged as one), return it. */
+  if (ans[RESULT]) return enhanceResult(ans);
+
   if (isPromise(ans))
     return {
       valid: null,
