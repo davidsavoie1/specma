@@ -2,7 +2,7 @@ import { check } from "./check.js";
 import { isPromise } from "./util.js";
 
 /* Returns `true`, `false` or a promise that resolves to these values. */
-export function isValid(spec, value, options, cb) {
+export function isValid(spec, value, options, cb = () => {}) {
   return interpretIsValid(
     check(spec, value, options, (response) => cb(interpretIsValid(response)))
   );
