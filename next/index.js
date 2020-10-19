@@ -3,6 +3,7 @@ export { check } from "./check";
 export { conform } from "./conform";
 export { isValid } from "./isValid";
 export { or } from "./or";
+export { pair } from "./pair";
 export { opt, select } from "./selection";
 export { spread } from "./spread";
 export { validate } from "./validate";

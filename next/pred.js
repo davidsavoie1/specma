@@ -23,10 +23,10 @@ export function setPred(pred, coll) {
 export function combinePreds(...preds) {
   if (preds.length <= 1) return preds[0];
 
-  return function combinedPred(value, context) {
+  return function combinedPred(value, context, key) {
     const results = preds
       .filter(isFunc)
-      .map((pred) => validatePred(pred, value, context));
+      .map((pred) => validatePred(pred, value, context, key));
 
     /* Any is invalid */
     const firstInvalid = results.find(
@@ -49,8 +49,11 @@ export function combinePreds(...preds) {
   };
 }
 
-export function validatePred(pred, value, context, enhanceResult) {
-  return interpretAnswer(failSafeCheck(pred, value, context), enhanceResult);
+export function validatePred(pred, value, context, key, enhanceResult) {
+  return interpretAnswer(
+    failSafeCheck(pred, value, context, key),
+    enhanceResult
+  );
 }
 
 function interpretAnswer(ans, enhanceResult = identity) {
@@ -74,12 +77,12 @@ function interpretAnswer(ans, enhanceResult = identity) {
 
 /* Check a value against a predicate.
  * If an error occurs during validation, returns false without throuwing. */
-function failSafeCheck(pred, value, context) {
+function failSafeCheck(pred, value, context, key) {
   const defaultReason = pred.name
     ? `failed '${pred.name}'`
     : DEFAULT_INVALID_MSG;
   try {
-    return pred(value, context) || defaultReason;
+    return pred(value, context, key) || defaultReason;
   } catch (err) {
     console.warn(`Error caught in '${pred.name}' pred:`, err.message); // eslint-disable-line no-console
     return defaultReason;
