@@ -23,6 +23,7 @@ export const fromSpec = polymorph(
       array[PRED] = spec.get(undefined);
       return array;
     },
+    function: (spec) => spec.get(undefined),
     map: (spec) => {
       const map = new Map(
         [...spec.entries()].filter(([key]) => key !== undefined)
