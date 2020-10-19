@@ -32,16 +32,20 @@ export function combinePreds(...preds) {
     const firstInvalid = results.find(
       ({ valid }) => ![null, true].includes(valid)
     );
-    if (firstInvalid) return firstInvalid.reason;
+    if (firstInvalid) {
+      if (firstInvalid[RESULT]) return firstInvalid;
+      return firstInvalid.reason;
+    }
 
     /* All valid synchronously */
     if (results.every(({ valid }) => valid === true)) return true;
 
     /* Some promises */
     const unresolvedResults = results.filter(({ valid }) => valid === null);
-    return resultsRace(unresolvedResults).then(
-      ({ valid, reason }) => valid === true || reason
-    );
+    return resultsRace(unresolvedResults).then((res) => {
+      if (res[RESULT]) return res;
+      return res.valid === true || res.reason;
+    });
   };
 }
 
