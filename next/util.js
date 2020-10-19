@@ -67,3 +67,8 @@ export function mergePaths(...paths) {
     .filter((key) => key !== undefined);
   return path.length > 0 ? path : undefined;
 }
+
+export function asKey(key) {
+  if (!isColl(key)) return key;
+  return JSON.stringify(key);
+}

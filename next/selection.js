@@ -1,7 +1,7 @@
 import merge from "deepmerge";
 import { OPTIONAL } from "./constants.js";
 import { getSpread } from "./spread.js";
-import { entries, fromMap, get, isColl, mergePaths } from "./util.js";
+import { asKey, entries, fromMap, get, isColl, mergePaths } from "./util.js";
 
 export function opt(selection = {}) {
   selection[OPTIONAL] = true;
@@ -22,7 +22,7 @@ export function findMissingPath(selection, coll, currKey) {
   }, []);
 
   const missingKey = reqKeys.find((k) => get(k, coll) === undefined);
-  if (missingKey !== undefined) return mergePaths(currKey, missingKey);
+  if (missingKey !== undefined) return mergePaths(asKey(currKey), missingKey);
 
   /* Drill down recursively into sub paths */
   const missingSubKey = reqEntries.reduce((acc, [k, subReq]) => {
@@ -36,7 +36,8 @@ export function findMissingPath(selection, coll, currKey) {
     return findMissingPath(subReq, subValue, k);
   }, undefined);
 
-  if (missingSubKey !== undefined) return mergePaths(currKey, missingSubKey);
+  if (missingSubKey !== undefined)
+    return mergePaths(asKey(currKey), missingSubKey);
   return undefined;
 }
 

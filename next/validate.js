@@ -3,7 +3,7 @@ import { validatePred } from "./pred.js";
 import { resultsRace } from "./results.js";
 import { createSelection, findMissingPath, select } from "./selection.js";
 import { typeOf } from "./typeOf.js";
-import { entries, getPath, isFunc, isSpec, mergePaths } from "./util.js";
+import { asKey, entries, getPath, isFunc, isSpec, mergePaths } from "./util.js";
 
 export function validate(
   specable,
@@ -22,7 +22,11 @@ export function validate(
     if (result.valid === null) return result;
     if (result.valid === true) return { ...result, value: prunedValue };
 
-    const path = mergePaths(globalKey, result.path);
+    const path = mergePaths(asKey(globalKey), result.path);
+    const baseResult = { ...result, path };
+
+    if (result.keyValidation) return baseResult;
+
     return {
       ...result,
       path,
