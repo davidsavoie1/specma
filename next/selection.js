@@ -53,7 +53,7 @@ export function select(selection, value) {
 
   return fromMap(
     new Map(
-      [...entries(value)]
+      Array.from(entries(value))
         .filter(([key]) =>
           explicitSelectionMap.has(key)
             ? explicitSelectionMap.get(key)

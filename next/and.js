@@ -4,9 +4,9 @@ import { isColl } from "./util.js";
 
 export function mergeSpecs(...specables) {
   const specs = specables.map(toSpec);
-  const allKeys = new Set(specs.map((spec) => [...spec.keys()]).flat());
+  const allKeys = new Set(specs.map((spec) => Array.from(spec.keys())).flat());
   return new Map(
-    [...allKeys.values()].map((key) => {
+    Array.from(allKeys.values()).map((key) => {
       const keySubSpecs = specs
         .filter((spec) => spec.has(key))
         .map((spec) => spec.get(key));

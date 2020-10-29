@@ -20,7 +20,7 @@ export const polymorph = (implementations, posOfColl = 1) => (...args) => {
 
 export const entries = polymorph({
   array: (arr) => arr.map((v, i) => [i, v]),
-  map: (map) => [...map.entries()],
+  map: (map) => Array.from(map.entries()),
   object: (obj) => Object.entries(obj),
   _: () => [],
 });
@@ -28,14 +28,14 @@ export const entries = polymorph({
 export const fromMap = polymorph(
   {
     array: (map) => {
-      const indices = [...map.keys()].filter(isNum);
+      const indices = Array.from(map.keys()).filter(isNum);
       const maxIndex = Math.max(...indices);
       return Array.from({ length: maxIndex + 1 }, (_, i) => map.get(i));
     },
-    map: (map) => new Map(...map.entries()),
+    map: (map) => new Map(map),
     object: (map) =>
       Object.fromEntries(
-        [...map.entries()].filter(([key]) => key !== undefined)
+        Array.from(map.entries()).filter(([key]) => key !== undefined)
       ),
   },
   2

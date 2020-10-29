@@ -16,7 +16,7 @@ export function toSpec(x) {
 export const fromSpec = polymorph(
   {
     array: (spec) => {
-      const indices = [...spec.keys()].filter(isNum);
+      const indices = Array.from(spec.keys()).filter(isNum);
       const maxIndex = Math.max(...indices);
       const array = Array.from({ length: maxIndex + 1 }, (_, i) => spec.get(i));
       array["..."] = spec.get("...");
@@ -26,14 +26,14 @@ export const fromSpec = polymorph(
     function: (spec) => spec.get(undefined),
     map: (spec) => {
       const map = new Map(
-        [...spec.entries()].filter(([key]) => key !== undefined)
+        Array.from(spec.entries()).filter(([key]) => key !== undefined)
       );
       map[PRED] = spec.get(undefined);
       return map;
     },
     object: (spec) => {
       const obj = Object.fromEntries(
-        [...spec.entries()].filter(([key]) => key !== undefined)
+        Array.from(spec.entries()).filter(([key]) => key !== undefined)
       );
       obj[PRED] = spec.get(undefined);
       return obj;
@@ -44,6 +44,6 @@ export const fromSpec = polymorph(
 
 const specEntries = polymorph({
   array: (arr) => [...arr.map((v, i) => [i, v]), ["...", arr["..."]]],
-  map: (map) => [...map.entries()],
+  map: (map) => Array.from(map.entries()),
   object: (obj) => Object.entries(obj),
 });
