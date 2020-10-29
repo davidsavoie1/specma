@@ -1,15 +1,18 @@
-import and from "./and";
-import { KEY_SPEC } from "./constants";
-import { cloneSpec } from "./util";
+import { and } from "./and";
+import { RESULT } from "./constants";
+import { validate } from "./validate";
 
 /* Associate a key spec to a spec. If the returned spec is used
  * in a collection, the associated key will be checked against it. */
-export default function pair(keySpec, valueSpec = () => true) {
-  const clone = cloneSpec(valueSpec);
-  clone[KEY_SPEC] = and(keySpec, valueSpec[KEY_SPEC]);
-  return clone;
-}
+export function pair([keySpec, valueSpec]) {
+  const keyPred = (value, context, key) => {
+    const result = {
+      ...validate(keySpec, key, { context }),
+      keyValidation: true,
+    };
+    result[RESULT] = true;
+    return result;
+  };
 
-export function getKeySpec(spec) {
-  return spec[KEY_SPEC];
+  return and(keyPred, valueSpec);
 }

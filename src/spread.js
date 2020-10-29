@@ -1,13 +1,15 @@
-import { KEY_SPEC, SPREAD } from "./constants";
-import { cloneSpec } from "./util";
+import { and } from "./and.js";
+import { get, isColl } from "./util.js";
 
-export function spread(spec) {
-  const clone = cloneSpec(spec);
-  clone[KEY_SPEC] = spec[KEY_SPEC];
-  clone[SPREAD] = true;
-  return clone;
+export function spread(spec, coll = []) {
+  if (!isColl(coll))
+    throw new TypeError(
+      "Spread (...) can only be applied on a collection spec"
+    );
+
+  return and(coll, new Map([["...", spec]]));
 }
 
-export function isSpread(spec) {
-  return spec && spec[SPREAD] === true;
+export function getSpread(coll) {
+  return get("...", coll);
 }

@@ -1,15 +1,7 @@
-import { extractSpreadSpec } from "./spreadHelpers";
-import { OPTIONAL } from "./constants";
-import {
-  fromEntries,
-  getCollItem,
-  getEntries,
-  isColl,
-  isPath,
-  isTypeOf,
-  mergePaths,
-  typeOf,
-} from "./util";
+import merge from "deepmerge";
+import { OPTIONAL } from "./constants.js";
+import { getSpread } from "./spread.js";
+import { asKey, entries, fromMap, get, isColl, mergePaths } from "./util.js";
 
 export function opt(selection = {}) {
   selection[OPTIONAL] = true;
@@ -21,30 +13,31 @@ export function isOpt(selection) {
 }
 
 export function findMissingPath(selection, coll, currKey) {
-  const reqEntries = getEntries(selection).filter(([, v]) => !!v);
+  const reqEntries = entries(selection).filter(([, v]) => !!v);
 
   /* Get the top level required keys */
   const reqKeys = reqEntries.reduce((acc, [k, v]) => {
-    if (isTypeOf("object", v) && isOpt(v)) return acc;
+    if (isColl(v) && isOpt(v)) return acc;
     return [...acc, k];
   }, []);
 
-  const missingKey = reqKeys.find((k) => getCollItem(k, coll) === undefined);
-  if (missingKey) return mergePaths(currKey, missingKey);
+  const missingKey = reqKeys.find((k) => get(k, coll) === undefined);
+  if (missingKey !== undefined) return mergePaths(asKey(currKey), missingKey);
 
   /* Drill down recursively into sub paths */
   const missingSubKey = reqEntries.reduce((acc, [k, subReq]) => {
-    if (!isTypeOf("object", subReq)) return undefined;
+    if (!isColl(subReq)) return undefined;
 
     const optional = !!subReq[OPTIONAL];
-    const subValue = getCollItem(k, coll);
+    const subValue = get(k, coll);
 
     if (!optional && !subValue) return k;
     if (optional && !subValue) return undefined;
     return findMissingPath(subReq, subValue, k);
   }, undefined);
 
-  if (isPath(missingSubKey)) return mergePaths(currKey, missingSubKey);
+  if (missingSubKey !== undefined)
+    return mergePaths(asKey(currKey), missingSubKey);
   return undefined;
 }
 
@@ -53,18 +46,27 @@ export function findMissingPath(selection, coll, currKey) {
 export function select(selection, value) {
   if (!(isColl(selection) && isColl(value))) return value;
 
-  const [spread, explicit] = extractSpreadSpec(selection);
-  if (!spread && explicit.length <= 0) return value;
+  const explicitSelectionMap = new Map(entries(selection));
+  const spreadSelection = getSpread(selection);
 
-  const explicitKeys = explicit.map(([key]) => key);
+  if (!spreadSelection && explicitSelectionMap.size <= 0) return value;
 
-  return fromEntries(
-    typeOf(value),
-    getEntries(value)
-      .filter(
-        ([k]) =>
-          !!spread || (explicitKeys.includes(k) && getCollItem(k, selection))
-      )
-      .map(([k, v]) => [k, select(getCollItem(k, selection), v)])
+  return fromMap(
+    new Map(
+      Array.from(entries(value))
+        .filter(([key]) =>
+          explicitSelectionMap.has(key)
+            ? explicitSelectionMap.get(key)
+            : !!spreadSelection
+        )
+        .map(([key, val]) => [key, select(explicitSelectionMap.get(key), val)])
+    ),
+    value
   );
+}
+
+export function createSelection({ selection, spec, required }) {
+  if (!selection) return undefined;
+  if (isColl(selection)) return selection;
+  return [spec, required].filter(isColl).reduce(merge, {});
 }
