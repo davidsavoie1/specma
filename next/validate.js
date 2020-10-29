@@ -8,7 +8,7 @@ import { asKey, entries, getPath, isFunc, isSpec, mergePaths } from "./util.js";
 export function validate(
   specable,
   value,
-  { context, required, selection: sel = false, key: globalKey } = {},
+  { context = {}, required, selection: sel = false, key: globalKey } = {},
   cb = () => {}
 ) {
   const selection = createSelection({
@@ -68,7 +68,6 @@ export function validate(
   }
 
   const spec = toSpec(specable);
-  const contextMap = new Map(entries(context));
 
   const globalResult = validate(spec.get(undefined), prunedValue, {
     context,
@@ -80,10 +79,7 @@ export function validate(
       const subSpec = spec.get(key) || spec.get("...");
       if (!isSpec(subSpec)) return acc;
 
-      const result = validate(subSpec, val, {
-        context: contextMap.get(key),
-        key,
-      });
+      const result = validate(subSpec, val, { context, key });
       return [...acc, result];
     },
     [globalResult]

@@ -2,7 +2,7 @@ import { RESULT } from "./constants";
 import { validate } from "./validate";
 
 export function or(...specs) {
-  return function _or(value, context) {
+  return function _or(value, context = {}) {
     const responses = specs.map((spec) => validate(spec, value, { context }));
     return interpretResponses(responses);
   };
