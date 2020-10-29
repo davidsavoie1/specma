@@ -3,6 +3,10 @@
   "version": "1.1.0",
   "description": "Simple and composable validation",
   "homepage": "https://github.com/davidsavoie1/specma.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidsavoie1/specma.git"
+  },
   "bugs": {
     "url": "https://github.com/davidsavoie1/specma/issues"
   },
@@ -18,11 +22,14 @@
   ],
   "author": "David Savoie",
   "license": "ISC",
+  "source": "next/index.js",
   "main": "dist/specma.cjs.js",
   "module": "dist/specma.esm.js",
+  "esmodule": "dist/specma.modern.js",
+  "umd:main": "dist/specma.umd.js",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "microbundle",
+    "dev": "microbundle watch",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,16 +37,15 @@
     "dist"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^15.1.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.1.2",
-    "rollup": "^2.28.2"
+    "microbundle": "^0.12.4",
+    "prettier": "^2.1.2"
   },
   "dependencies": {
+    "deepmerge": "^4.2.2",
     "ramda": "^0.27.1"
   }
 }
