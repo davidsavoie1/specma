@@ -10,7 +10,7 @@ export function mergeSpecs(...specables) {
       const keySubSpecs = specs
         .filter((spec) => spec.has(key))
         .map((spec) => spec.get(key));
-      return [key, combinePreds(...keySubSpecs)];
+      return [key, and(...keySubSpecs)];
     })
   );
 }
