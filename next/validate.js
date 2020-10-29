@@ -44,7 +44,11 @@ export function validate(
   if (!specable) return respond({ valid: true });
 
   if (isFunc(specable))
-    return validatePred(specable, prunedValue, context, globalKey, respond);
+    return validatePred(specable, prunedValue, {
+      context,
+      key: globalKey,
+      enhanceResult: respond,
+    });
 
   const specType = typeOf(specable);
   if (typeOf(prunedValue) !== specType)

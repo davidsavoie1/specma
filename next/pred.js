@@ -26,7 +26,7 @@ export function combinePreds(...preds) {
   return function combinedPred(value, context, key) {
     const results = preds
       .filter(isFunc)
-      .map((pred) => validatePred(pred, value, context, key));
+      .map((pred) => validatePred(pred, value, { context, key }));
 
     /* Any is invalid */
     const firstInvalid = results.find(
@@ -49,7 +49,11 @@ export function combinePreds(...preds) {
   };
 }
 
-export function validatePred(pred, value, context, key, enhanceResult) {
+export function validatePred(
+  pred,
+  value,
+  { context = {}, key, enhanceResult } = {}
+) {
   return interpretAnswer(
     failSafeCheck(pred, value, context, key),
     enhanceResult
