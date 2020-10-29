@@ -51,11 +51,28 @@ export const get = polymorph(
   2
 );
 
+export const set = polymorph(
+  {
+    array: (index, value, arr) => Object.assign([], arr, { [index]: value }),
+    map: (key, value, map) => map.set(key, value),
+    object: (key, value, obj) => Object.assign({}, obj, { [key]: value }),
+    _: (key, value, x) => (x[key] = value),
+  },
+  3
+);
+
 export function getPath(path = [], value) {
   return path.reduce((parent, key) => get(key, parent), value);
 }
 
 export const identity = (x) => x;
+
+export const keys = polymorph({
+  array: (arr) => arr.map((v, i) => i),
+  map: (map) => Array.from(map.keys()),
+  object: (obj) => Object.keys(obj),
+  _: () => [],
+});
 
 export function mergePaths(...paths) {
   const path = paths
