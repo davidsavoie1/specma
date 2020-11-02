@@ -1,14 +1,18 @@
 # Changelog
 
-## [Unreleased]
+## [2.1.0] - 2020-11-02
 
 ### Break
 
 ### Grow
 
+- Export only UMD and "modern" (`<script type="module">`) bundles, instead of UMD + CJS + Modules + Modern. Should still be importable from any project, but entry points may have changed and bundle size is considerably reduced.
+
 ### Fix
 
 ### Deprecate
+
+- Remove source maps; they didn't point to any useful code and removing them makes for a much lighter package.
 
 ---
 
