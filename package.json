@@ -23,13 +23,11 @@
   "author": "David Savoie",
   "license": "ISC",
   "source": "src/index.js",
-  "main": "dist/specma.cjs.js",
-  "module": "dist/specma.esm.js",
-  "esmodule": "dist/specma.modern.js",
-  "umd:main": "dist/specma.umd.js",
+  "main": "dist/specma.umd.js",
+  "module": "dist/specma.modern.js",
   "scripts": {
-    "build": "microbundle",
-    "dev": "microbundle watch",
+    "build": "microbundle src/index.js -f modern,umd",
+    "dev": "microbundle watch src/index.js -f modern,umd",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
