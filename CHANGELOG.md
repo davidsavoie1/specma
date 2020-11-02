@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased]
+
+### Break
+
+### Grow
+
+### Fix
+
+### Deprecate
+
+---
+
+## [2.1.0] - 2020-11-02
+
+### Break
+
+### Grow
+
+- Do not compress output so that code is readable and can act as its own source map.
+
+### Fix
+
+### Deprecate
+
+---
+
 ## [2.1.0] - 2020-11-02
 
 ### Break
