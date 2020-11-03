@@ -1,4 +1,3 @@
-import { isColl } from "./util.js";
 import { validate } from "./validate.js";
 
 /* Return `true` if valid, error reason if invalid
@@ -18,9 +17,8 @@ function interpretCheck(result) {
 
 export function enhanceReason({ reason, path = [] }) {
   const key = path.join(".");
-  if (!key) return reason;
-
-  const stringified = isColl(reason) ? JSON.stringify(reason) : reason;
-  const message = `'${key}' ${stringified}`;
+  const stringified =
+    typeof reason === "object" ? JSON.stringify(reason) : reason.toString();
+  const message = key ? `'${key}' ${stringified}` : stringified;
   return message;
 }

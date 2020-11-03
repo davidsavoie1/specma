@@ -8,6 +8,8 @@
 
 ### Fix
 
+- `check` should always return stringified reason, even when no key
+
 ### Deprecate
 
 ---
