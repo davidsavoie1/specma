@@ -8,6 +8,18 @@
 
 ### Fix
 
+### Deprecate
+
+---
+
+## [2.1.2] - 2020-11-02
+
+### Break
+
+### Grow
+
+### Fix
+
 - `check` should always return stringified reason, even when no key
 
 ### Deprecate
