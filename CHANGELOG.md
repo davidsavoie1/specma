@@ -12,6 +12,20 @@
 
 ---
 
+## [2.1.4] = 2020-11-09
+
+### Break
+
+### Grow
+
+### Fix
+
+- Ensure a promise is always returned in the validation result
+
+### Deprecate
+
+---
+
 ## [2.1.3] = 2020-11-09
 
 ### Break
