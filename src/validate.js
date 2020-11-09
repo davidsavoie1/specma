@@ -35,8 +35,13 @@ export function validate(
     };
   }
 
+  function ensurePromise(res) {
+    if (res.promise) return res;
+    return { ...res, promise: Promise.resolve(res) };
+  }
+
   function respond(result) {
-    const response = enhanceResult(result);
+    const response = ensurePromise(enhanceResult(result));
     cb(response);
     return response;
   }
