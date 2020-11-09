@@ -12,6 +12,20 @@
 
 ---
 
+## [2.1.3] = 2020-11-09
+
+### Break
+
+### Grow
+
+### Fix
+
+- Treat all types of functions (regular, generator, async, ...) as predicate specs
+
+### Deprecate
+
+---
+
 ## [2.1.2] - 2020-11-02
 
 ### Break
