@@ -1,4 +1,5 @@
 import { toSpec } from "./collSpec.js";
+import { defaultMessages, getMessage } from "./messages.js";
 import { validatePred } from "./pred.js";
 import { resultsRace } from "./results.js";
 import { createSelection, findMissingPath, select } from "./selection.js";
@@ -8,7 +9,13 @@ import { asKey, entries, getPath, isFunc, isSpec, mergePaths } from "./util.js";
 export function validate(
   specable,
   value,
-  { context = {}, required, selection: sel = false, key: globalKey } = {},
+  {
+    context = {},
+    messages = defaultMessages,
+    required,
+    selection: sel = false,
+    key: globalKey,
+  } = {},
   cb = () => {}
 ) {
   const selection = createSelection({
@@ -67,7 +74,7 @@ export function validate(
   if (missingPath !== undefined) {
     return respond({
       valid: false,
-      reason: "is required",
+      reason: getMessage("isRequired", messages),
       path: missingPath,
     });
   }

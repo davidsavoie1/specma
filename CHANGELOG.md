@@ -6,6 +6,7 @@
 
 ### Grow
 
+- Allow customization of built-in reason messages.
 - Append validation result to `conform` `error.details`.
 
 ### Fix

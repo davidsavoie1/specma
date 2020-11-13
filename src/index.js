@@ -14,6 +14,7 @@ export { and } from "./and";
 export { check } from "./check";
 export { conform } from "./conform";
 export { isValid } from "./isValid";
+export { getMessage, setMessages } from "./messages";
 export { or } from "./or";
 export { pair } from "./pair";
 export { getPred } from "./pred";
