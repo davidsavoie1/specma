@@ -6,6 +6,8 @@
 
 ### Grow
 
+- Append validation result to `conform` `error.details`.
+
 ### Fix
 
 ### Deprecate

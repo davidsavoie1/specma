@@ -13,5 +13,7 @@ function interpretConform(result) {
   if (result.valid === true) return result.value;
   if (result.valid === null)
     return result.promise.then((promised) => interpretConform(promised));
-  throw new Error(enhanceReason(result));
+  const error = new Error(enhanceReason(result));
+  error.details = result;
+  throw error;
 }
