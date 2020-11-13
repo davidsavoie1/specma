@@ -10,6 +10,8 @@
 
 ### Fix
 
+- `createSelection` fails with `Cannot create property 'arrayMerge' of '1'`
+
 ### Deprecate
 
 ---

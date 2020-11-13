@@ -68,5 +68,5 @@ export function select(selection, value) {
 export function createSelection({ selection, spec, required }) {
   if (!selection) return undefined;
   if (isColl(selection)) return selection;
-  return [spec, required].filter(isColl).reduce(merge, {});
+  return [spec, required].filter(isColl).reduce((a, b) => merge(a, b), {});
 }
