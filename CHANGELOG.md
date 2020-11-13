@@ -6,6 +6,18 @@
 
 ### Grow
 
+### Fix
+
+### Deprecate
+
+---
+
+## [2.1.5] - 2020-11-13
+
+### Break
+
+### Grow
+
 - Allow customization of built-in reason messages.
 - Append validation result to `conform` `error.details`.
 
@@ -17,7 +29,7 @@
 
 ---
 
-## [2.1.4] = 2020-11-09
+## [2.1.4] - 2020-11-09
 
 ### Break
 
