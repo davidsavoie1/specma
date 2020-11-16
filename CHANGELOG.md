@@ -7,6 +7,7 @@
 ### Grow
 
 - Set arity on combined pred function based on argument pred functions. Allows checking arity before creating/passing `getFrom` function.
+- Expose `validatePred` and `getPath` utility function.
 
 ### Fix
 
