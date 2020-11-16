@@ -1,6 +1,6 @@
 import { fromSpec, toSpec } from "./collSpec.js";
 import { combinePreds } from "./pred.js";
-import { isColl } from "./util.js";
+import { isColl, isSpec } from "./util.js";
 
 export function mergeSpecs(...specables) {
   const specs = specables.map(toSpec);
@@ -16,7 +16,8 @@ export function mergeSpecs(...specables) {
 }
 
 export function and(...specables) {
-  const firstColl = specables.find(isColl);
-  if (!firstColl) return combinePreds(...specables);
-  return fromSpec(mergeSpecs(...specables), firstColl);
+  const filtered = specables.filter(isSpec);
+  const firstColl = filtered.find(isColl);
+  if (!firstColl) return combinePreds(...filtered);
+  return fromSpec(mergeSpecs(...filtered), firstColl);
 }
