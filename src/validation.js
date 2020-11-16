@@ -1,6 +1,7 @@
 import { toSpec } from "./collSpec";
 import { getMessage } from "./messages";
 import { isResult, resultsRace } from "./results";
+import { typeOf } from "./typeOf";
 import {
   entries,
   getPath,
@@ -28,6 +29,16 @@ export function _validate(
 
   /* Always valid if not a usable spec */
   if (!isSpec(specable)) return enhanceResult({ valid: true }, enhanceArgs);
+
+  /* Immediately validate collection type */
+  if (isColl(specable)) {
+    const collType = typeOf(specable);
+    if (typeOf(value) !== collType)
+      return enhanceResult(
+        { valid: false, reason: `must be of type ${collType}` },
+        enhanceArgs
+      );
+  }
 
   /* Transform into a Map spec */
   const spec = toSpec(specable);
