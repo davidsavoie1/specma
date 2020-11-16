@@ -1,4 +1,5 @@
 import { toSpec } from "./collSpec";
+import { VALID } from "./constants";
 import { getMessage } from "./messages";
 import { isResult, resultsRace } from "./results";
 import { typeOf } from "./typeOf";
@@ -28,7 +29,7 @@ export function _validate(
   const enhanceArgs = { path, value };
 
   /* Always valid if not a usable spec */
-  if (!isSpec(specable)) return enhanceResult({ valid: true }, enhanceArgs);
+  if (!isSpec(specable)) return enhanceResult(VALID, enhanceArgs);
 
   /* Immediately validate collection type */
   if (isColl(specable)) {
@@ -121,7 +122,7 @@ function interpretPredAnswer(ans) {
   /* If answer is itself already a result (tagged as one), return it. */
   if (isResult(ans)) return ans;
 
-  if (ans === true) return { valid: true };
+  if (ans === true) return VALID;
 
   if (isPromise(ans))
     return {
@@ -140,7 +141,7 @@ function interpretCollValidation(results = []) {
   if (firstInvalid) return firstInvalid;
 
   /* All valid synchronously */
-  if (results.every(({ valid }) => valid === true)) return { valid: true };
+  if (results.every(({ valid }) => valid === true)) return VALID;
 
   /* Some promises */
   const unresolvedResults = results.filter(({ valid }) => valid === null);

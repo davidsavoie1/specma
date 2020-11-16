@@ -1,4 +1,4 @@
-import { RESULT } from "./constants";
+import { RESULT, VALID } from "./constants";
 import { isColl } from "./util";
 
 /* Check if result has been tagged as one. */
@@ -19,7 +19,7 @@ function passFailAsync(result) {
  * it means that all are valid. */
 export function resultsRace(results) {
   return Promise.all(results.map(passFailAsync))
-    .then(() => ({ valid: true }))
+    .then(() => VALID)
     .catch((result) => result);
 }
 
