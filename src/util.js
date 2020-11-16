@@ -65,8 +65,6 @@ export function getPath(path = [], value) {
   return path.reduce((parent, key) => get(key, parent), value);
 }
 
-export const identity = (x) => x;
-
 export const keys = polymorph({
   array: (arr) => arr.map((v, i) => i),
   map: (map) => Array.from(map.keys()),
@@ -84,8 +82,6 @@ export function mergePaths(...paths) {
     .filter((key) => key !== undefined);
   return path.length > 0 ? path : undefined;
 }
-
-export const noop = () => {};
 
 export function asKey(key) {
   if (!isColl(key)) return key;
