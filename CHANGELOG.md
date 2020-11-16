@@ -12,6 +12,7 @@
 ### Fix
 
 - Pass `options` to `key` pred.
+- Pass `getFrom` instead of `goTo` to `_validate` in `or`.
 
 ### Deprecate
 

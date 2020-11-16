@@ -2,8 +2,8 @@ import { tagAsResult } from "./results";
 import { _validate } from "./validation";
 
 export function or(...specs) {
-  return function _or(value, goTo) {
-    const results = specs.map((spec) => _validate(spec, value, { goTo }));
+  return function _or(value, getFrom) {
+    const results = specs.map((spec) => _validate(spec, value, { getFrom }));
     return interpretResults(results);
   };
 }
