@@ -26,12 +26,11 @@ export function setPred(pred, coll) {
 /* Combine multiple predicate specs into a single function,
  * racing for first invalid result when async. */
 export function combinePreds(...preds) {
-  if (preds.length <= 1) return preds[0];
+  const realPreds = preds.filter(isFunc);
+  if (realPreds.length <= 1) return realPreds[0];
 
-  return function combinedPred(...args) {
-    const results = preds
-      .filter(isFunc)
-      .map((pred) => validatePred(pred, ...args));
+  function combinedPred(...args) {
+    const results = realPreds.map((pred) => validatePred(pred, ...args));
 
     /* Any is invalid */
     const firstInvalid = results.find(
@@ -51,5 +50,15 @@ export function combinePreds(...preds) {
       if (isResult(res)) return res;
       return res.valid === true || res.reason;
     });
-  };
+  }
+
+  /* Set the arity of the function based on the max arity of predicates. */
+  const maxLength = realPreds.reduce(
+    (acc, pred) => Math.max(acc, pred.length),
+    0
+  );
+
+  Object.defineProperty(combinedPred, "length", { value: maxLength });
+
+  return combinedPred;
 }
