@@ -49,7 +49,9 @@ export function validate(
     rootValue: prunedValue,
   });
 
-  cb(result);
-  if (result.valid === null) result.promise.then(cb);
-  return result;
+  const enhanced = { ...result, value: prunedValue };
+
+  cb(enhanced);
+  if (enhanced.valid === null) enhanced.promise.then(cb);
+  return enhanced;
 }
