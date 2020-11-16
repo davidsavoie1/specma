@@ -12,6 +12,67 @@
 
 ---
 
+## [2.2.0] - 2020-11-15
+
+Still some breaking changes in this release, but it is stabilizing. The `context` that was provided to predicate spec functions was very brittle. It was nearly impossible to define a deeply nested context and most predicate functions had to know way more than they should in order to perform validation. Now, a `getFrom` helper function is passed as the second argument to predicate spec functions. It accepts a relative string path (similar to those used with `cd` command in CLIs) that points to another location in the value being validated.
+
+This should favor a particuliar way of defining specs, where the parent that _should_ know about a particular constraint should be the one defining the spec for a nested value. Here's an example :
+
+Let's say we have a list of choices. Taken individually, each choice could be any primitive value (string, number, boolean, etc.). However, the choices list itself is aware that there should be no duplicate choices; each choice doesn't know about this constraint. Although it would be possible to add this validation as a predicate function on the choices list itself, it might be better to define it on each individual choice for better error handling in forms, etc. This validation would be defined at the choices level however.
+
+Moreover, the list of choices itself could be used in a parent value that provides context for what kind of choices are allowed. This restriction on type would then be defined at the parent level.
+
+```js
+/* Not concerned with unicity or specific type. Highly reusable. */
+const primitive = s.or(number, string, boolean);
+
+/* Not concerned about specific type, but ensures values are unique. Highly reusable. */
+const noDuplicatesList = s.spread(
+  s.and(primitive, function uniqueValue(x, getFrom) {
+    const list = getFrom("..");
+    return list.filter((item) => item === x).length <= 1 || "must be unique";
+  })
+);
+
+/* Don't have to specify again that choices must be unique.
+ * Add a constraint on list values based on another prop. */
+const spec = {
+  type: oneOf(["string", "number"]),
+  choices: s.and(
+    noDuplicatesList,
+    s.spread(function choiceByType(choice, getFrom) {
+      const type = getFrom("../../type");
+      return typeof choice === type || `must be of type '${type}'`;
+    })
+  ),
+};
+
+/* Each choice will be a unique string value. */
+const value = {
+  type: "string",
+  choices: ["foo", "bar"],
+};
+```
+
+### Break
+
+- Replace `context` with more flexible `getFrom` helper in predicate spec functions.
+- Remove `pair` in favor of `key` to spec spread objects.
+- Split `validate` and `_validate` to prevent former from being called with internal only params.
+
+### Grow
+
+- Add `key` spec creator on main API to replace `pair`.
+- Allow customizing "is invalid" message
+
+### Fix
+
+- `or` didn't validate as expected
+
+### Deprecate
+
+---
+
 ## [2.1.5] - 2020-11-13
 
 ### Break
