@@ -15,8 +15,8 @@ function interpretCheck(result) {
   return enhanceReason(result);
 }
 
-export function enhanceReason({ reason, path = [] }) {
-  const key = path.join(".");
+export function enhanceReason({ reason, failedPath = [] }) {
+  const key = failedPath.join(".");
   const stringified =
     typeof reason === "object" ? JSON.stringify(reason) : reason.toString();
   const message = key ? `'${key}' ${stringified}` : stringified;

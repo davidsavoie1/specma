@@ -1,30 +1,29 @@
-import { RESULT } from "./constants";
-import { validate } from "./validate";
+import { tagAsResult } from "./results";
+import { _validate } from "./validation";
 
 export function or(...specs) {
-  return function _or(value, context = {}) {
-    const responses = specs.map((spec) => validate(spec, value, { context }));
-    return interpretResponses(responses);
+  return function _or(value, goTo) {
+    const results = specs.map((spec) => _validate(spec, value, { goTo }));
+    return interpretResults(results);
   };
 }
 
-function interpretResponses(responses) {
+function interpretResults(results) {
   /* If any response is already valid, `or` is valid. */
-  if (responses.some(({ valid }) => valid === true)) return true;
+  if (results.some(({ valid }) => valid === true)) return true;
 
-  const pendingResults = responses.filter(({ valid }) => valid === null);
+  const pendingResults = results.filter(({ valid }) => valid === null);
 
   /* If no pending results, return the reason of the first invalid reason.
    * If no invalid result is found, `or` is valid. */
   if (pendingResults.length <= 0) {
-    const firstInvalid = responses.find(({ valid }) => valid === false);
-    if (firstInvalid) {
-      /* Tagging it as a result will allow keeping the result intact in validation */
-      firstInvalid[RESULT] = true;
-      return firstInvalid;
-    }
+    /* If any answer is true, `or` is true. */
+    if (results.some(({ valid }) => valid === true)) return true;
 
-    return true;
+    /* Otherwise, return the first failed result */
+    const lastInvalid = results.find(({ valid }) => valid === false);
+
+    return tagAsResult(lastInvalid);
   }
 
   /* If there is any pending result, return a global promise
@@ -42,6 +41,6 @@ function failIfValidAsync(result) {
 
 function raceValidResult(results) {
   return Promise.all(results.map(failIfValidAsync))
-    .then(interpretResponses)
+    .then(interpretResults)
     .catch(() => true);
 }

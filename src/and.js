@@ -2,7 +2,14 @@ import { fromSpec, toSpec } from "./collSpec.js";
 import { combinePreds } from "./pred.js";
 import { isColl, isSpec } from "./util.js";
 
-export function mergeSpecs(...specables) {
+export function and(...specables) {
+  const filtered = specables.filter(isSpec);
+  const firstColl = filtered.find(isColl);
+  if (!firstColl) return combinePreds(...filtered);
+  return fromSpec(mergeSpecs(...filtered), firstColl);
+}
+
+function mergeSpecs(...specables) {
   const specs = specables.map(toSpec);
   const allKeys = new Set(specs.map((spec) => Array.from(spec.keys())).flat());
   return new Map(
@@ -13,11 +20,4 @@ export function mergeSpecs(...specables) {
       return [key, and(...keySubSpecs)];
     })
   );
-}
-
-export function and(...specables) {
-  const filtered = specables.filter(isSpec);
-  const firstColl = filtered.find(isColl);
-  if (!firstColl) return combinePreds(...filtered);
-  return fromSpec(mergeSpecs(...filtered), firstColl);
 }

@@ -85,6 +85,8 @@ export function mergePaths(...paths) {
   return path.length > 0 ? path : undefined;
 }
 
+export const noop = () => {};
+
 export function asKey(key) {
   if (!isColl(key)) return key;
   return JSON.stringify(key);

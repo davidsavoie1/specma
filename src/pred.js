@@ -1,15 +1,18 @@
 import { fromSpec, toSpec } from "./collSpec.js";
-import { PRED, RESULT } from "./constants.js";
-import { resultsRace } from "./results.js";
-import { identity, isColl, isFunc, isPromise } from "./util.js";
-
-const DEFAULT_INVALID_MSG = "is invalid";
+import { PRED } from "./constants.js";
+import { isResult, resultsRace } from "./results.js";
+import { isColl, isFunc } from "./util.js";
+import { validatePred } from "./validation.js";
 
 export function getPred(spec) {
   if (isFunc(spec)) return spec;
   return spec && spec[PRED];
 }
 
+/* Associate a predicate spec to a collection
+ * by converting the collection to a standard Map spec,
+ * combining the function with existing predicate,
+ * then converting Map spec back into original collection type. */
 export function setPred(pred, coll) {
   if (!isColl(coll)) return coll;
   const spec = toSpec(coll);
@@ -20,20 +23,22 @@ export function setPred(pred, coll) {
   return fromSpec(spec, coll);
 }
 
+/* Combine multiple predicate specs into a single function,
+ * racing for first invalid result when async. */
 export function combinePreds(...preds) {
   if (preds.length <= 1) return preds[0];
 
-  return function combinedPred(value, context, key) {
+  return function combinedPred(...args) {
     const results = preds
       .filter(isFunc)
-      .map((pred) => validatePred(pred, value, { context, key }));
+      .map((pred) => validatePred(pred, ...args));
 
     /* Any is invalid */
     const firstInvalid = results.find(
       ({ valid }) => ![null, true].includes(valid)
     );
     if (firstInvalid) {
-      if (firstInvalid[RESULT]) return firstInvalid;
+      if (isResult(firstInvalid)) return firstInvalid;
       return firstInvalid.reason;
     }
 
@@ -43,52 +48,8 @@ export function combinePreds(...preds) {
     /* Some promises */
     const unresolvedResults = results.filter(({ valid }) => valid === null);
     return resultsRace(unresolvedResults).then((res) => {
-      if (res[RESULT]) return res;
+      if (isResult(res)) return res;
       return res.valid === true || res.reason;
     });
   };
-}
-
-export function validatePred(
-  pred,
-  value,
-  { context = {}, key, enhanceResult } = {}
-) {
-  return interpretAnswer(
-    failSafeCheck(pred, value, context, key),
-    enhanceResult
-  );
-}
-
-function interpretAnswer(ans, enhanceResult = identity) {
-  /* If answer is itself already a result (tagged as one), return it. */
-  if (ans[RESULT]) return enhanceResult(ans);
-
-  if (isPromise(ans))
-    return {
-      valid: null,
-      promise: ans.then((promisedAns) =>
-        interpretAnswer(promisedAns, enhanceResult)
-      ),
-    };
-
-  const res =
-    ans === true
-      ? { valid: true }
-      : { valid: false, reason: ans || DEFAULT_INVALID_MSG };
-  return enhanceResult({ ...res, promise: Promise.resolve(res) });
-}
-
-/* Check a value against a predicate.
- * If an error occurs during validation, returns false without throuwing. */
-function failSafeCheck(pred, value, context, key) {
-  const defaultReason = pred.name
-    ? `failed '${pred.name}'`
-    : DEFAULT_INVALID_MSG;
-  try {
-    return pred(value, context, key) || defaultReason;
-  } catch (err) {
-    console.warn(`Error caught in '${pred.name}' pred:`, err.message); // eslint-disable-line no-console
-    return defaultReason;
-  }
 }
