@@ -5,7 +5,7 @@ import { tagAsResult } from "./results";
  * instead of the value itself. */
 export function key(keySpec) {
   return (value, getFrom, options = {}) => {
-    const result = validatePred(keySpec, options.key, getFrom);
+    const result = validatePred(keySpec, options.key, getFrom, options);
     if (result.valid === false) result.failedValue = options.key;
     return tagAsResult({ ...result, keyValidation: true });
   };
