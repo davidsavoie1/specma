@@ -1,7 +1,10 @@
 import { tagAsResult } from "./results";
+import { isSpec } from "./util";
 import { _validate } from "./validation";
 
-export function or(...specs) {
+export function or(...args) {
+  const specs = args.filter(isSpec);
+
   return function _or(value, getFrom) {
     const results = specs.map((spec) => _validate(spec, value, { getFrom }));
     return interpretResults(results);

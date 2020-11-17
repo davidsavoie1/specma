@@ -15,6 +15,7 @@
 - Pass `getFrom` instead of `goTo` to `_validate` in `or`.
 - Always return promise on valid result.
 - Ensure value is always attached to `validate` result.
+- Properly reify arguments to `or` to avoid unpredictable bugs.
 
 ### Deprecate
 
