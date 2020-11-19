@@ -62,7 +62,10 @@ export function _validate(
   const results = entries(value).reduce(
     (acc, [subKey, subVal]) => {
       const subSpec = spec.get(subKey) || spec.get("...");
-      if (!isSpec(subSpec)) return acc;
+
+      /* Undefined value is not considered. `required` option will validate this.
+       * Unspeced entry is not considered. */
+      if (subVal === undefined || !isSpec(subSpec)) return acc;
 
       const result = _validate(subSpec, subVal, {
         key: subKey,
