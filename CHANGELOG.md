@@ -14,6 +14,20 @@
 
 ---
 
+## [2.3.0] - 2020-11-19
+
+### Break
+
+- Subvalues that are `undefined` are not validated. The `required` option should be used to ensure values are present. Otherwise, each spec had to be defined taking `undefined` into account.
+
+### Grow
+
+### Fix
+
+### Deprecate
+
+---
+
 ## [2.2.1] - 2020-11-16
 
 ### Break
