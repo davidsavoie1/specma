@@ -8,6 +8,8 @@
 
 ### Fix
 
+- Compare type with strict equality `===` in `isColl`;
+
 ### Deprecate
 
 ---
