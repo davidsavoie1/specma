@@ -1,10 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [2.3.1] - 2020-11-23
 
 ### Break
 
 ### Grow
+
+- Use external documentation site instead of only the README;
 
 ### Fix
 
