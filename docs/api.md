@@ -1,25 +1,43 @@
-# Validation
+# API
 
-## `validate`
+Documentation is on its way! Thank you for your patience...
 
-## `check`
+## Validation
 
-## `isValid`
+### `validate`
 
-## `conform`
+### `check`
 
-# Specs
+### `isValid`
 
-## `and`
+### `conform`
 
-## `or`
+### `validatePred`
 
-## `spread`
+## Specs
 
-## `pair`
+### `and`
 
-# Selection
+### `or`
 
-## `select`
+### `spread`
 
-## `opt`
+### `key`
+
+### `getPred`
+
+### `getSpread`
+
+## Selection
+
+### `select`
+
+### `opt`
+
+### `isOpt`
+
+## Messages
+
+### `getMessage`
+
+### `setMessages`

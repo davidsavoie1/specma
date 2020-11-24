@@ -148,6 +148,8 @@ s.check(s.or(asyncValid, asyncInvalid), 42, {}, log);
 
 ## Collection
 
+Here's what makes Specma shine! Documentation is coming soon...
+
 ## Real life
 
 Here's an example of real-life complex document validation that makes use of most of the power of Specma. It's this kind of scenario that led to the creation of Specma in the first place.
@@ -157,3 +159,5 @@ Here's an example of real-life complex document validation that makes use of mos
 ```
 
 ## Best practices
+
+Here are some tips to get the most out of Specma.
