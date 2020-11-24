@@ -28,6 +28,7 @@
   "scripts": {
     "build": "microbundle src/index.js -f modern,umd --sourcemap false --no-compress",
     "dev": "microbundle watch src/index.js -f modern,umd --sourcemap false --no-compress",
+    "docs": "docsify serve docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
