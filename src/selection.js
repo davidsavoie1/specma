@@ -1,7 +1,15 @@
 import merge from "deepmerge";
 import { OPTIONAL } from "./constants.js";
 import { getSpread } from "./spread.js";
-import { asKey, entries, fromMap, get, isColl, mergePaths } from "./util.js";
+import {
+  asKey,
+  entries,
+  fromMap,
+  get,
+  isColl,
+  keys,
+  mergePaths,
+} from "./util.js";
 
 export function opt(selection = {}) {
   selection[OPTIONAL] = true;
@@ -13,7 +21,16 @@ export function isOpt(selection) {
 }
 
 export function findMissingPath(selection, coll, currKey) {
-  const reqEntries = entries(selection).filter(([, v]) => !!v);
+  let reqEntries = entries(selection).filter(([k, v]) => k !== "..." && !!v);
+
+  /* Append all collection keys as requirement entries if a spread is defined. */
+  const spreadSelection = getSpread(selection);
+  if (spreadSelection && !(isOpt(spreadSelection) && coll === undefined)) {
+    reqEntries = [
+      ...reqEntries,
+      ...keys(coll).map((k) => [k, spreadSelection]),
+    ];
+  }
 
   /* Get the top level required keys */
   const reqKeys = reqEntries.reduce((acc, [k, v]) => {
@@ -26,6 +43,8 @@ export function findMissingPath(selection, coll, currKey) {
 
   /* Drill down recursively into sub paths */
   const missingSubKey = reqEntries.reduce((acc, [k, subReq]) => {
+    if (acc !== undefined) return acc;
+
     if (!isColl(subReq)) return undefined;
 
     const optional = !!subReq[OPTIONAL];
@@ -46,7 +65,9 @@ export function findMissingPath(selection, coll, currKey) {
 export function select(selection, value) {
   if (!(isColl(selection) && isColl(value))) return value;
 
-  const explicitSelectionMap = new Map(entries(selection));
+  const explicitSelectionMap = new Map(
+    entries(selection).filter(([k]) => k !== "...")
+  );
   const spreadSelection = getSpread(selection);
 
   if (!spreadSelection && explicitSelectionMap.size <= 0) return value;
