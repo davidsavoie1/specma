@@ -1,5 +1,19 @@
 # Changelog
 
+## [UNRELEASED] -
+
+### Break
+
+### Grow
+
+### Fix
+
+- Exclude `undefined` props in selection;
+
+### Deprecate
+
+---
+
 ## [2.3.2] - 2020-11-26
 
 ### Break
