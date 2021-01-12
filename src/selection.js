@@ -80,7 +80,10 @@ export function select(selection, value) {
             ? explicitSelectionMap.get(key)
             : !!spreadSelection
         )
-        .map(([key, val]) => [key, select(explicitSelectionMap.get(key), val)])
+        .map(([key, val]) => [
+          key,
+          select(explicitSelectionMap.get(key) || spreadSelection, val),
+        ])
         .filter(([, val]) => val !== undefined)
     ),
     value
