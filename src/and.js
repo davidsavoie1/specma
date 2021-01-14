@@ -1,11 +1,13 @@
 import { fromSpec, toSpec } from "./collSpec.js";
+import { isOpt, opt } from "./opt.js";
 import { combinePreds } from "./pred.js";
 import { isColl } from "./util.js";
 
 export function and(...specables) {
   const firstColl = specables.find(isColl);
   if (!firstColl) return combinePreds(...specables);
-  return fromSpec(mergeSpecs(...specables), firstColl);
+  const spec = fromSpec(mergeSpecs(...specables), firstColl);
+  return specables.every(isOpt) ? opt(spec) : spec;
 }
 
 function mergeSpecs(...specables) {

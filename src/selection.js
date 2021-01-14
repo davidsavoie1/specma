@@ -90,7 +90,10 @@ export function createSelection({ selection, spec, required }) {
 function mergeColls(...arr) {
   const colls = arr.filter(isColl);
   if (colls.length < 2) return colls[0];
-  return colls.reduce((a, b) => merge(a, b, { arrayMerge: combineArrays }));
+  const merged = colls.reduce((a, b) =>
+    merge(a, b, { arrayMerge: combineArrays })
+  );
+  return colls.every(isOpt) ? opt(merged) : merged;
 }
 
 function combineArrays(target, source, options) {
