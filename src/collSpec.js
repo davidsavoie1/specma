@@ -1,12 +1,12 @@
 import { PRED } from "./constants.js";
-import { isColl, isFunc, isNum, isSpec, polymorph } from "./util.js";
+import { isColl, isFunc, isNum, polymorph } from "./util.js";
 
 export function toSpec(x) {
   if (isFunc(x)) return new Map([[undefined, x]]);
   if (isColl(x)) {
     return new Map(
       [[undefined, x[PRED]], ...specEntries(x)]
-        .filter(([, y]) => isSpec(y))
+        .filter(([, y]) => y !== undefined)
         .map(([key, y]) => [key, y])
     );
   }

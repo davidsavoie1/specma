@@ -93,5 +93,28 @@ export function select(selection, value) {
 export function createSelection({ selection, spec, required }) {
   if (!selection) return undefined;
   if (isColl(selection)) return selection;
-  return [spec, required].filter(isColl).reduce((a, b) => merge(a, b), {});
+  return mergeColls(spec, required);
+}
+
+function mergeColls(...arr) {
+  const colls = arr.filter(isColl);
+  if (colls.length < 2) return colls[0];
+  return colls.reduce((a, b) => merge(a, b, { arrayMerge: combineArrays }));
+}
+
+function combineArrays(target, source, options) {
+  const destination = target.slice();
+
+  source.forEach((item, index) => {
+    if (destination[index] === undefined) {
+      destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
+    } else if (options.isMergeableObject(item)) {
+      destination[index] = merge(target[index], item, options);
+    } else if (target.indexOf(item) === -1) {
+      destination.push(item);
+    }
+  });
+
+  destination["..."] = mergeColls(target["..."], source["..."]);
+  return destination;
 }

@@ -26,7 +26,7 @@ export function setPred(pred, coll) {
 /* Combine multiple predicate specs into a single function,
  * racing for first invalid result when async. */
 export function combinePreds(...preds) {
-  const realPreds = preds.filter(isFunc);
+  const realPreds = preds.map((pred) => (isFunc(pred) ? pred : () => true));
   if (realPreds.length <= 1) return realPreds[0];
 
   function combinedPred(...args) {
