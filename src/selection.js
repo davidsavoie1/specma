@@ -1,5 +1,5 @@
 import merge from "deepmerge";
-import { OPTIONAL } from "./constants.js";
+import { isOpt, opt } from "./opt.js";
 import { getSpread } from "./spread.js";
 import {
   asKey,
@@ -10,15 +10,6 @@ import {
   keys,
   mergePaths,
 } from "./util.js";
-
-export function opt(selection = {}) {
-  selection[OPTIONAL] = true;
-  return selection;
-}
-
-export function isOpt(selection) {
-  return !selection || !!selection[OPTIONAL];
-}
 
 export function findMissingPath(selection, coll, currKey) {
   let reqEntries = entries(selection).filter(([k, v]) => k !== "..." && !!v);
@@ -47,7 +38,7 @@ export function findMissingPath(selection, coll, currKey) {
 
     if (!isColl(subReq)) return undefined;
 
-    const optional = !!subReq[OPTIONAL];
+    const optional = isOpt(subReq);
     const subValue = get(k, coll);
 
     if (!optional && !subValue) return k;
