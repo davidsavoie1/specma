@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.3.5] - 2021-01-14
+
+### Break
+
+### Grow
+
+- Consider non collection/pred specs (ie `1, null, "foo"`) as always true predicates. This facilitates combination of spec and required keys as a selection object, since requirements are only true/false values;
+
+### Fix
+
+- Keep optionality attribute when combining collection specs;
+
+### Deprecate
+
+---
+
 ## [2.3.4] - 2021-01-12
 
 ### Break
