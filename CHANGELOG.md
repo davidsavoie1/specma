@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.0.0] - 2021-10-20
+
+### Break
+
+- Consider only known collections (array, object, map) when checking if a value is a collection. This ensures that other complex values such as dates are note treated as collections, but as values;
+- Consider both `null` and `undefined` when checking for required keys;
+- Remove unused and unexported `setPred` function;
+
+### Grow
+
+### Fix
+
+### Deprecate
+
+---
+
 ## [2.3.5] - 2021-01-14
 
 ### Break
