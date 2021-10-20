@@ -7,6 +7,7 @@ const isType = (type) => (x) => typeOf(x) === type;
 export const isArr = isType("array");
 export const isColl = (x) => ["array", "map", "object"].includes(typeOf(x));
 export const isFunc = (x) => typeof x === "function";
+export const isNil = (x) => [null, undefined].includes(x);
 export const isNum = isType("number");
 export const isPromise = (x) => x && isFunc(x.then);
 export const isSpec = (x) => isFunc(x) || isColl(x);

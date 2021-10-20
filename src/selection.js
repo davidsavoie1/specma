@@ -7,6 +7,7 @@ import {
   fromMap,
   get,
   isColl,
+  isNil,
   keys,
   mergePaths,
 } from "./util.js";
@@ -29,7 +30,7 @@ export function findMissingPath(selection, coll, currKey) {
     return [...acc, k];
   }, []);
 
-  const missingKey = reqKeys.find((k) => get(k, coll) === undefined);
+  const missingKey = reqKeys.find((k) => isNil(get(k, coll)));
   if (missingKey !== undefined) return mergePaths(asKey(currKey), missingKey);
 
   /* Drill down recursively into sub paths */
@@ -41,8 +42,7 @@ export function findMissingPath(selection, coll, currKey) {
     const optional = isOpt(subReq);
     const subValue = get(k, coll);
 
-    if (!optional && !subValue) return k;
-    if (optional && !subValue) return undefined;
+    if (isNil(subValue)) return optional ? undefined : k;
     return findMissingPath(subReq, subValue, k);
   }, undefined);
 
