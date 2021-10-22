@@ -94,11 +94,14 @@ function failSafeCheck(pred, ...args) {
   try {
     return pred(...args) || defaultReason;
   } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.warn(
-      `Failed '${pred.name}' pred because of runtime error:`,
-      err.message
-    );
+    /* eslint-disable no-console */
+    if (console && console.error) {
+      console.error(
+        `Specma: Failed '${pred.name}' pred because of runtime error:`,
+        err.message
+      );
+    }
+    /* eslint-enable no-console */
     return defaultReason;
   }
 }
