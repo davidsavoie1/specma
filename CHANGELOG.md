@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.0.1] - 2021-10-22
+
+### Break
+
+### Grow
+
+### Fix
+
+- Properly log runtime predicate failure to console to facilitate debugging;
+
+### Deprecate
+
+---
+
 ## [3.0.0] - 2021-10-20
 
 ### Break
