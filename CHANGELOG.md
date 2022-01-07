@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.1.0] - 2022-01-07
+
+### Break
+
+### Grow
+
+- Add `checkAsync`, `conformAsync`, `isValidAsync` and `validateAsync` main API functions. Always return a promise, instead of a hybrid for sync and async spec validation.
+
+### Fix
+
+- Attach failed path to result in async collection validation;
+- Fix npm audit errors;
+
+### Deprecate
+
+---
+
 ## [3.0.1] - 2021-10-22
 
 ### Break
