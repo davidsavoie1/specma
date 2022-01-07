@@ -118,7 +118,7 @@ function enhanceResult(res, { path, value }) {
       : res;
 
   const promise = res.promise
-    ? res.promise.then((promised) => enhanceResult(promised, { value }))
+    ? res.promise.then((promised) => enhanceResult(promised, { path, value }))
     : Promise.resolve(enhanced);
 
   return { ...enhanced, promise };
