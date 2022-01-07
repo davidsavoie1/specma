@@ -21,9 +21,9 @@ export const util = {
 };
 
 export { and } from "./and";
-export { check } from "./check";
-export { conform } from "./conform";
-export { isValid } from "./isValid";
+export { check, checkAsync } from "./check";
+export { conform, conformAsync } from "./conform";
+export { isValid, isValidAsync } from "./isValid";
 export { key } from "./key";
 export { getMessage, setMessages } from "./messages";
 export { isOpt, opt } from "./opt";
@@ -31,5 +31,5 @@ export { or } from "./or";
 export { getPred } from "./pred";
 export { select } from "./selection";
 export { getSpread, spread } from "./spread";
-export { validate } from "./validate";
+export { validate, validateAsync } from "./validate";
 export { validatePred } from "./validation";

@@ -9,6 +9,10 @@ export function conform(spec, value, options, cb = () => {}) {
   );
 }
 
+export function conformAsync(...args) {
+  return Promise.resolve(conform(...args));
+}
+
 function interpretConform(result) {
   if (result.valid === true) return result.value;
   if (result.valid === null)

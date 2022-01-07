@@ -15,7 +15,7 @@ import { _validate } from "./validation.js";
  *   failedPath,
  *  }.
  * Built-in messages can be overriden manually.
- * Required fields and value seleciton can be specified. */
+ * Required fields and value selection can be specified. */
 export function validate(
   specable,
   value,
@@ -54,4 +54,8 @@ export function validate(
   cb(enhanced);
   if (enhanced.valid === null) enhanced.promise.then(cb);
   return enhanced;
+}
+
+export function validateAsync(...args) {
+  return validate(...args).promise;
 }

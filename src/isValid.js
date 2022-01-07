@@ -8,6 +8,10 @@ export function isValid(spec, value, options, cb = () => {}) {
   );
 }
 
+export function isValidAsync(...args) {
+  return Promise.resolve(isValid(...args));
+}
+
 function interpretIsValid(ans) {
   if (ans === true) return true;
   if (isPromise(ans)) return ans.then(interpretIsValid);

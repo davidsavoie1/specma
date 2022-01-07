@@ -8,6 +8,10 @@ export function check(spec, value, options, cb = () => {}) {
   );
 }
 
+export async function checkAsync(...args) {
+  return Promise.resolve(check(...args));
+}
+
 function interpretCheck(result) {
   if (result.valid === null) return result.promise.then(interpretCheck);
   if (result.valid === true) return true;
