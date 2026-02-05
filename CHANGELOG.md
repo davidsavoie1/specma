@@ -1,6 +1,6 @@
 # Changelog
 
-## [NEXT]
+## [3.1.1] - 2026-02-05
 
 - Add `createSelection` to main API;
 
