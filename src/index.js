@@ -29,7 +29,7 @@ export { getMessage, setMessages } from "./messages";
 export { isOpt, opt } from "./opt";
 export { or } from "./or";
 export { getPred } from "./pred";
-export { select } from "./selection";
+export { createSelection, select } from "./selection";
 export { getSpread, spread } from "./spread";
 export { validate, validateAsync } from "./validate";
 export { validatePred } from "./validation";

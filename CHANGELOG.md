@@ -1,5 +1,11 @@
 # Changelog
 
+## [NEXT]
+
+- Add `createSelection` to main API;
+
+---
+
 ## [3.1.0] - 2022-01-07
 
 ### Break
